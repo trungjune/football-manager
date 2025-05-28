@@ -1,0 +1,3 @@
+# Loại trừ file .env khỏi danh sách bị chặn
+!.env
+!.env.example

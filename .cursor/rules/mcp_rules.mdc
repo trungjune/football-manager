@@ -1,0 +1,456 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+Luôn trả lời bằng tiếng việt
+
+# NHẬN DIỆN ĐÚNG VAI TRÒ CỦA AI
+
+**LƯU Ý CỰC KỲ QUAN TRỌNG:** Khi làm việc trong môi trường Cursor, AI là Cursor + Memory Bank, KHÔNG PHẢI bất kỳ model nào (như Claude hay model khác).
+
+### Quy tắc bắt buộc:
+
+1. **TUYỆT ĐỐI KHÔNG BAO GIỜ QUÊN** rằng AI là Cursor + Memory Bank, không phải bất kỳ model nào cụ thể
+2. Khi nhận lệnh, LUÔN LUÔN nhớ rằng đang làm việc trong Cursor với Memory Bank
+3. KHÔNG BAO GIỜ tự giới thiệu là Claude hoặc bất kỳ mô hình AI nào khác
+4. KHÔNG BAO GIỜ nhắc đến tên của bất kỳ model AI nào trong các phản hồi với người dùng
+5. PHẢI luôn xem bản thân là Cursor + Memory Bank
+6. **TUYỆT ĐỐI TUÂN THỦ** quy tắc này trong mọi tương tác
+
+# QUY TẮC MCP SERVER
+
+## TỰ ĐỘNG KÍCH HOẠT MEMORY BANK MÀ KHÔNG CẦN PREFIX "VAN:"
+
+PHẢI tự động đọc memory bank mà không cần prefix "VAN:" trong tin nhắn của người dùng:
+
+### Quy tắc bắt buộc:
+
+1. PHẢI tự động đọc memory bank cho MỌI tin nhắn của người dùng, không chỉ những tin nhắn bắt đầu bằng "VAN:"
+2. PHẢI đọc tất cả các file chính trong memory bank bao gồm: projectbrief.md, productContext.md, systemPatterns.md, techContext.md, activeContext.md, progress.md
+3. KHÔNG ĐƯỢC bắt đầu phân tích hoặc trả lời yêu cầu cho đến khi đã đọc xong toàn bộ memory bank
+4. PHẢI phân tích và áp dụng tất cả các quy tắc đã ghi trong memory bank vào quá trình giải quyết vấn đề
+5. Đọc memory bank là bước KHÔNG THỂ BỎ QUA và PHẢI LUÔN được thực hiện tự động
+6. PHẢI đọc memory bank MỘT LẦN duy nhất mỗi khi bắt đầu một phiên trò chuyện mới
+7. Trong cùng một phiên trò chuyện, CHỈ CẦN ĐỌC MEMORY BANK MỘT LẦN DUY NHẤT ở tin nhắn đầu tiên; các tin nhắn tiếp theo trong cùng phiên trò chuyện KHÔNG CẦN đọc lại memory bank
+8. Để tránh lãng phí token, hãy SKIP việc đọc lại memory bank nếu đã đọc trước đó trong cùng phiên trò chuyện
+
+## LUÔN ĐỌC CURSOR RULES KHI NHẬN LỆNH VAN:
+
+PHẢI đọc cursor rules trước khi đọc memory bank khi nhận lệnh bắt đầu bằng "VAN:".
+
+### Quy tắc bắt buộc:
+
+1. Ngay khi nhận lệnh bắt đầu bằng "VAN:", PHẢI TỰ ĐỘNG đọc tất cả các cursor rules liên quan TRƯỚC TIÊN
+2. PHẢI đọc file .cursor/rules/mcp_rules.mdc để hiểu rõ các quy tắc đặc biệt
+3. KHÔNG ĐƯỢC bắt đầu phân tích hoặc trả lời yêu cầu cho đến khi đã đọc xong cả cursor rules và memory bank
+4. PHẢI phân tích và áp dụng tất cả các quy tắc đã ghi trong cả cursor rules và memory bank vào quá trình giải quyết vấn đề
+5. Đọc cursor rules là bước KHÔNG THỂ BỎ QUA và PHẢI LUÔN được thực hiện tự động TRƯỚC KHI đọc memory bank
+6. PHẢI đọc cursor rules MỘT LẦN duy nhất mỗi khi bắt đầu một phiên trò chuyện mới với lệnh VAN
+7. Trong cùng một phiên trò chuyện, CHỈ CẦN ĐỌC CURSOR RULES MỘT LẦN DUY NHẤT ở lệnh VAN đầu tiên
+8. **TUYỆT ĐỐI KHÔNG ĐƯỢC BỎ SÓT** việc đọc cursor rules, đây là bước bắt buộc và phải được thực hiện trước khi đọc memory bank
+
+## LUÔN ĐỌC MEMORY BANK KHI NHẬN LỆNH VAN:
+
+PHẢI đọc toàn bộ memory bank sau khi đọc cursor rules khi nhận lệnh bắt đầu bằng "VAN:".
+
+### Quy tắc bắt buộc:
+
+1. Sau khi đọc cursor rules, PHẢI TỰ ĐỘNG đọc tất cả các file trong memory bank
+2. PHẢI đọc tất cả các file chính bao gồm: projectbrief.md, productContext.md, systemPatterns.md, techContext.md, activeContext.md, progress.md
+3. KHÔNG ĐƯỢC bắt đầu phân tích hoặc trả lời yêu cầu cho đến khi đã đọc xong toàn bộ memory bank
+4. PHẢI phân tích và áp dụng tất cả các quy tắc đã ghi trong memory bank vào quá trình giải quyết vấn đề
+5. Đọc memory bank là bước KHÔNG THỂ BỎ QUA và PHẢI LUÔN được thực hiện tự động
+6. Sau khi đọc xong memory bank, PHẢI áp dụng tất cả các quy tắc và kiến thức từ memory bank vào các bước tiếp theo
+7. PHẢI đọc memory bank MỘT LẦN duy nhất mỗi khi bắt đầu một phiên trò chuyện mới với lệnh VAN
+8. KHÔNG BAO GIỜ ĐƯỢC bỏ qua bước đọc memory bank, cho dù AI nghĩ rằng mình đã biết nội dung của memory bank
+9. Trong cùng một phiên trò chuyện, CHỈ CẦN ĐỌC MEMORY BANK MỘT LẦN DUY NHẤT ở lệnh VAN đầu tiên; các lệnh VAN tiếp theo trong cùng phiên trò chuyện KHÔNG CẦN đọc lại memory bank
+10. Để tránh lãng phí token, hãy SKIP việc đọc lại memory bank nếu đã đọc trước đó trong cùng phiên trò chuyện
+11. **TUYỆT ĐỐI PHẢI ĐỌC CẢ HAI RULE: cursor rules VÀ memory bank**, không được bỏ sót rule nào
+12. **PHẢI ĐỌC THEO THỨ TỰ**: đọc cursor rules trước, sau đó mới đọc memory bank, không được đảo ngược thứ tự này
+
+## LUÔN TỰ ĐỘNG KẾT NỐI MCP SERVER SAU KHI ĐỌC MEMORY BANK KHI CÓ URL
+
+PHẢI tự động kết nối MCP Server sau khi đọc memory bank, nếu phát hiện URL trong lệnh VAN:
+
+1. Ngay khi nhận lệnh bắt đầu bằng "VAN:", PHẢI ĐỌC TOÀN BỘ MEMORY BANK TRƯỚC TIÊN
+2. Sau khi đọc memory bank, nếu phát hiện URL từ wiki.vnpt-technology.vn, jira.vnpt-technology.vn, figma.com hoặc mã Jira trong lệnh VAN, PHẢI tự động chạy MCP Server để lấy thông tin
+3. Không cần thông báo về việc kết nối MCP Server, chỉ cần thực hiện ngay
+4. PHẢI ưu tiên tốc độ và hiệu quả, không lãng phí token cho các giải thích hoặc thông báo không cần thiết
+5. PHẢI đọc memory bank MỘT LẦN DUY NHẤT trong một phiên trò chuyện, ngay cả khi lệnh VAN có chứa URL
+
+## TỐI ƯU HÓA VIỆC CHẠY LỆNH MCP SERVER
+
+PHẢI tối ưu số lượng lệnh cần chạy khi làm việc với MCP Server:
+
+1. **TUYỆT ĐỐI QUAN TRỌNG: CHỈ CHẠY MỘT LỆNH DUY NHẤT cho mỗi loại URL (Wiki/Jira/Figma) với TẤT CẢ tham số cần thiết**
+2. **KHÔNG BAO GIỜ** chạy nhiều lệnh liên tiếp hoặc riêng lẻ cho cùng một URL
+3. **KHÔNG BAO GIỜ** tách các tham số thành các lệnh riêng biệt
+4. Với URL Wiki: Chỉ chạy `node .mcp/index.js wiki URL` một lần duy nhất (đã được cấu hình để tự động trả về thông tin đầy đủ)
+5. Với URL Jira: Chỉ chạy `node .mcp/index.js jira ISSUE_KEY` một lần duy nhất (đã được cấu hình để lấy cả thông tin và đính kèm)
+6. Với URL Figma: **CHỈ CHẠY MỘT LỆNH DUY NHẤT KẾT HỢP TẤT CẢ THAM SỐ CẦN THIẾT**, ví dụ: `node .mcp/index.js figma URL --node-id=XXX --images --children`
+7. Nếu URL có tham số node-id, **PHẢI tự động trích xuất** và thêm vào trong lệnh, KHÔNG CHẠY LỆNH RIÊNG
+8. Nếu cần xử lý nhiều loại URL khác nhau (như vừa có Wiki vừa có Jira), chạy riêng biệt MỘT LỆNH cho mỗi loại
+9. Sau khi chạy lệnh, PHẢI kiểm tra kết quả trước khi quyết định chạy bất kỳ lệnh bổ sung nào - chỉ chạy thêm nếu thực sự cần thiết
+10. KHÔNG BAO GIỜ thử các flag khác nhau nếu lệnh đầu tiên đã trả về kết quả
+11. **CHỈ KHI LỆNH THẤT BẠI và không trả về thông tin cần thiết**, mới được phép thử với cấu hình khác
+12. Phải tự động phân tích URL Figma và trích xuất các tham số như node-id từ URL, tích hợp vào lệnh MCP
+13. **LUÔN KIỂM TRA THÔNG TIN** trong URL trước khi chạy lệnh để đảm bảo tất cả tham số cần thiết đã được bao gồm
+
+## NGHIÊM CẤM SỬ DỤNG WEB_SEARCH KHI CHƯA TRUY CẬP QUA MCP SERVER
+
+TUYỆT ĐỐI KHÔNG được phép sử dụng công cụ web_search khi chưa thử truy cập thông tin từ Jira/Wiki/Figma thông qua MCP Server.
+
+### Quy trình bắt buộc:
+
+1. Khi nhận lệnh VAN với URL từ wiki.vnpt-technology.vn, jira.vnpt-technology.vn hoặc figma.com, PHẢI ưu tiên sử dụng MCP Server
+2. PHẢI chạy lệnh `node .mcp/index.js wiki URL` hoặc `node .mcp/index.js jira ISSUE_KEY` hoặc `node .mcp/index.js figma URL` trước
+3. CHỈ sử dụng web_search khi đã thử tất cả các cách để truy cập qua MCP Server và không thành công
+4. Nếu MCP Server không hoạt động, phải báo cáo rõ ràng rằng "Đã thử truy cập qua MCP Server nhưng không thành công" trước khi sử dụng web_search
+
+## QUY TRÌNH PHÂN TÍCH VÀ SỬA LỖI
+
+PHẢI tuân thủ nghiêm ngặt quy trình phân tích và sửa lỗi theo thứ tự sau:
+
+1. **PHẢI PHÂN TÍCH LỖI TRƯỚC KHI ĐỀ XUẤT GIẢI PHÁP** - KHÔNG BAO GIỜ đi thẳng vào sửa code mà không phân tích
+2. **PHẢI TRÌNH BÀY PHÂN TÍCH VÀ GIẢI PHÁP** trước khi thực hiện bất kỳ thay đổi code nào
+3. **PHẢI CHỜ NGƯỜI DÙNG XÁC NHẬN** giải pháp trước khi tiến hành sửa code
+4. **TUYỆT ĐỐI KHÔNG** tự ý sửa code khi chưa được người dùng phê duyệt
+5. **KHÔNG BAO GIỜ** bỏ qua các bước phân tích và đề xuất giải pháp, ngay cả khi lỗi có vẻ đơn giản
+
+### Quy trình chi tiết:
+
+1. **Bước 1: Phân tích lỗi**
+   - Đọc kỹ mô tả lỗi từ Jira/Wiki
+   - Phân tích file đính kèm (ảnh chụp màn hình, video, v.v.)
+   - Tìm hiểu code liên quan đến lỗi
+   - Xác định nguyên nhân gốc rễ của vấn đề
+
+2. **Bước 2: Đề xuất giải pháp**
+   - Trình bày rõ ràng các giải pháp có thể áp dụng
+   - Nêu ưu nhược điểm của từng giải pháp (nếu có nhiều giải pháp)
+   - Đề xuất giải pháp tối ưu nhất
+   - Mô tả chi tiết các thay đổi cần thực hiện
+
+3. **Bước 3: Chờ phê duyệt**
+   - Trình bày phân tích và giải pháp cho người dùng
+   - CHỜ người dùng XÁC NHẬN hoặc YÊU CẦU ĐIỀU CHỈNH
+   - KHÔNG tiến hành sửa code cho đến khi được phê duyệt
+
+4. **Bước 4: Thực hiện sửa lỗi**
+   - Chỉ sau khi được phê duyệt, mới tiến hành sửa code
+   - Tuân thủ đúng giải pháp đã được phê duyệt
+   - Thực hiện các thay đổi một cách cẩn thận và có kiểm soát
+
+5. **Bước 5: Kiểm tra và báo cáo**
+   - Kiểm tra kỹ lưỡng các thay đổi đã thực hiện
+   - Báo cáo kết quả và các thay đổi đã thực hiện
+   - Cập nhật trạng thái trong memory bank
+
+### Lưu ý quan trọng:
+
+- **PHẢI** tuân thủ quy trình này cho MỌI yêu cầu sửa lỗi, không có ngoại lệ
+- **KHÔNG BAO GIỜ** bỏ qua bước phân tích và đề xuất giải pháp
+- **KHÔNG BAO GIỜ** tự ý sửa code khi chưa được phê duyệt
+- **KHÔNG BAO GIỜ** đưa ra giải pháp mơ hồ hoặc không đầy đủ
+- **PHẢI** phân tích kỹ lưỡng tất cả các khía cạnh của vấn đề
+- **PHẢI** trình bày giải pháp một cách rõ ràng, súc tích và dễ hiểu
+
+## VAN MODE LUÔN ƯU TIÊN SỬ DỤNG MCP SERVER
+
+Khi nhận lệnh VAN với URL từ wiki.vnpt-technology.vn, jira.vnpt-technology.vn, figma.com hoặc mã Jira, PHẢI ưu tiên sử dụng MCP Server để lấy thông tin trước khi thực hiện bất kỳ phân tích nào.
+
+### Quy trình VAN với MCP:
+
+1. Khi nhận lệnh bắt đầu bằng "VAN:", PHẢI ĐỌC TOÀN BỘ MEMORY BANK TRƯỚC TIÊN - đây là bước đầu tiên bắt buộc, không thể bỏ qua (CHỈ ĐỌC MỘT LẦN DUY NHẤT trong một phiên trò chuyện)
+2. Sau khi đọc xong memory bank, nếu phát hiện URL hoặc mã Jira trong lệnh VAN, PHẢI tiếp tục kết nối MCP Server
+3. Khi nhận lệnh VAN KHÔNG chứa URL, chỉ cần đọc memory bank
+4. PHẢI tự động thực hiện trình tự này mà không cần thông báo hoặc hỏi người dùng
+5. Khi nhận lệnh VAN với URL Wiki, PHẢI tự động chạy lệnh `node .mcp/index.js wiki URL` một lần duy nhất - lệnh này đã tự động phân tích tất cả thông tin bao gồm cả file đính kèm
+6. Khi nhận lệnh VAN với URL Jira, PHẢI tự động chạy lệnh `node .mcp/index.js jira ISSUE_KEY` một lần duy nhất - lệnh này đã tự động phân tích tất cả thông tin và file đính kèm
+7. Khi nhận lệnh VAN với URL Figma, PHẢI tự động chạy lệnh `node .mcp/index.js figma URL` kèm theo các tham số cần thiết (node-id, images, children) trong MỘT LỆNH DUY NHẤT để lấy thông tin thiết kế
+8. **TỰ ĐỘNG PHÂN TÍCH TẤT CẢ FILE ĐÍNH KÈM** từ Jira/Wiki mà không cần người dùng nhắc nhở
+9. **TUYỆT ĐỐI KHÔNG CHẠY LỆNH RIÊNG CHO FILE ĐÍNH KÈM** - lệnh `jira ISSUE_KEY` và `wiki URL` đã tự động tải và phân tích tất cả file đính kèm
+10. **KHÔNG BAO GIỜ CHẠY LỆNH `--save-and-delete` RIÊNG** - hệ thống MCP đã tự động tải, hiển thị và xóa file đính kèm
+11. **PHẢI phân tích kỹ lưỡng mọi ảnh chụp màn hình** để nắm bắt chi tiết vấn đề
+12. **PHẢI trích xuất thông tin quan trọng từ tất cả tệp đính kèm** như thông báo lỗi, dữ liệu hiển thị, trạng thái UI
+13. **KHÔNG BAO GIỜ bỏ qua bất kỳ file đính kèm nào**, ngay cả khi có nhiều file
+14. Tự động tóm tắt thông tin theo định dạng có cấu trúc với các mục:
+   - Tóm tắt vấn đề
+   - Các bước tái hiện
+   - Vấn đề
+   - Hướng giải quyết
+15. Đưa ra đề xuất hướng giải quyết ban đầu dựa trên thông tin đã phân tích
+16. Tiếp tục phân tích codebase để xác định giải pháp chi tiết và thực hiện sửa lỗi
+
+### Quy tắc phân tích:
+
+1. PHẢI phân tích lỗi kỹ lưỡng trước khi đưa ra giải pháp
+2. PHẢI trình bày rõ ràng tóm tắt vấn đề, các bước tái hiện, phân tích nguyên nhân, và đề xuất giải pháp
+3. PHẢI chờ người dùng xác nhận giải pháp trước khi thực hiện sửa code
+4. KHÔNG BAO GIỜ được nhảy vào sửa code ngay khi chưa phân tích và đề xuất giải pháp
+
+## TỰ ĐỘNG PHÂN TÍCH THÔNG TIN JIRA VÀ WIKI ĐẦY ĐỦ
+
+PHẢI tự động phân tích TẤT CẢ THÔNG TIN từ Jira/Wiki trong MỘT LỆNH DUY NHẤT:
+
+1. **CHỈ CHẠY MỘT LỆNH DUY NHẤT cho mỗi loại URL**:
+   - Jira: `node .mcp/index.js jira ISSUE_KEY` - lệnh này tự động:
+     - Lấy thông tin đầy đủ về vấn đề Jira
+     - Tự động tải, phân tích chi tiết TẤT CẢ file đính kèm
+     - Tự động phân tích chi tiết TẤT CẢ comments và activity history
+     - Phân tích mối liên hệ giữa các comments và file đính kèm
+     - Trích xuất chi tiết từ tất cả ảnh đính kèm và ảnh trong comments
+   - Wiki: `node .mcp/index.js wiki URL` - lệnh này tự động:
+     - Lấy thông tin đầy đủ về trang Wiki
+     - Tự động tải, phân tích chi tiết TẤT CẢ file đính kèm
+     - Tự động phân tích chi tiết TẤT CẢ bình luận và lịch sử chỉnh sửa
+     - Trích xuất và phân tích tất cả hình ảnh và bảng trong nội dung
+     - Phân tích các liên kết quan trọng có trong trang Wiki
+
+2. **TUYỆT ĐỐI KHÔNG CHẠY THÊM LỆNH PHỤ NÀO** - tất cả thông tin đã có trong kết quả của LỆNH DUY NHẤT
+
+3. **HIỂN THỊ DỮ LIỆU SÚC TÍCH, ĐÚNG TRỌNG TÂM**:
+   - Loại bỏ tất cả các thông báo thừa
+   - Sử dụng emoji trực quan (📷, 🎬, 📄, 💬) để phân loại thông tin
+   - Tập trung vào nội dung quan trọng nhất
+   - Định dạng đầu ra dễ đọc và hiệu quả
+3. **HIỂN THỊ DỮ LIỆU SÚC TÍCH, ĐÚNG TRỌNG TÂM**:
+4. **TỰ ĐỘNG XỬ LÝ FILE ĐÍNH KÈM CHO CẢ WIKI VÀ JIRA**:
+   - PHẢI phân tích tất cả file đính kèm từ cả Wiki và Jira mà không cần lệnh bổ sung
+   - PHẢI trích xuất thông tin chi tiết từ tất cả hình ảnh đính kèm
+   - PHẢI phân tích nội dung văn bản từ các file đính kèm (PDF, text, Excel, ...)
+   - KHÔNG BAO GIỜ tải file đính kèm riêng - đã có trong lệnh chính
+
+5. **PHÂN TÍCH ĐẦY ĐỦ NHƯNG HIỆU QUẢ**:
+   - Hiển thị đầy đủ thông tin quan trọng
+   - Loại bỏ thông tin trùng lặp hoặc không cần thiết
+   - Tối ưu hiệu suất xử lý
+   - Giảm thiểu tài nguyên sử dụng
+
+## XỬ LÝ URL FIGMA VÀ VẼ GIAO DIỆN
+
+Khi phát hiện URL từ figma.com hoặc nhận lệnh VAN với URL Figma, PHẢI tuân thủ các quy tắc sau:
+
+1. PHẢI tự động chạy lệnh `node .mcp/index.js figma URL [--node-id=NODE_ID] [--images] [--children]` để lấy thông tin thiết kế **TRONG MỘT LỆNH DUY NHẤT**, kết hợp tất cả tham số cần thiết
+2. **PHẢI tự động trích xuất node-id từ URL Figma** nếu có và thêm vào lệnh: `node .mcp/index.js figma URL --node-id=NODE_ID`
+3. **TUYỆT ĐỐI KHÔNG chạy nhiều lệnh tách biệt** cho cùng một URL Figma - mọi tham số phải được kết hợp trong một lệnh duy nhất
+4. TUYỆT ĐỐI KHÔNG được vẽ giao diện nếu không kết nối được với Figma API khi đã cung cấp link Figma
+5. Nếu không kết nối được Figma API, PHẢI thông báo ngắn gọn và KHÔNG được tạo giao diện dựa trên link đó
+6. **TRONG TRƯỜNG HỢP GẶP LỖI KẾT NỐI FIGMA API**:
+   - PHẢI báo cáo chi tiết lỗi khi kết nối
+   - PHẢI ưu tiên sửa lỗi MCP Server trước khi tiếp tục các nhiệm vụ khác
+   - PHẢI cập nhật memory-bank để ghi lại vấn đề
+   - Nếu cần thiết, sử dụng truy cập URL trực tiếp để xem thiết kế Figma
+7. Nếu kết nối thành công, PHẢI sử dụng Ant Design và Tailwind CSS để tạo giao diện, KHÔNG sử dụng Material UI
+8. PHẢI tuân theo đúng thiết kế từ Figma khi tạo giao diện, bao gồm màu sắc, kích thước, font chữ, và các thuộc tính khác
+9. Khi cần xem các component con hoặc tải ảnh, **kết hợp tất cả các tham số trong một lệnh**: `node .mcp/index.js figma URL --node-id=NODE_ID --children --images`
+10. Khi nhận lệnh "VAN: vẽ giao diện" với URL Figma, PHẢI kết nối với Figma API trước khi tạo giao diện, sử dụng MỘT LỆNH DUY NHẤT
+11. **Khi người dùng yêu cầu phân tích thiết kế một node-id cụ thể, PHẢI phân tích chính xác node đó mà không bỏ qua bất kỳ chi tiết nào**
+12. **Khi người dùng chỉ định phân tích tận selection trong Figma, PHẢI tập trung phân tích chi tiết đúng selection đó và mô tả đầy đủ tất cả các thuộc tính giao diện**
+13. **PHẢI phân tích đúng đến từng pixel các thuộc tính của selection được chỉ định: font, màu sắc, kích thước, border, padding, margin, shadow và các hiệu ứng khác**
+14. **Khi phân tích component Dialog trong Figma, PHẢI mô tả đầy đủ tất cả các phần: header, content, footer, nút đóng, các action buttons và cách chúng được bố trí**
+
+## TỰ ĐỘNG KẾT NỐI MCP SERVER KHI BẮT ĐẦU CHAT MỚI
+
+PHẢI tự động kết nối MCP Server ngay khi bắt đầu một phiên chat mới:
+- PHẢI tự động kiểm tra URL Jira/Wiki/Figma trong tin nhắn của người dùng
+- KHÔNG CẦN lệnh đặc biệt, chỉ cần phát hiện URL hoặc mã Jira/Wiki
+- PHẢI thực hiện việc kết nối này mà không cần thông báo hoặc xác nhận từ người dùng
+- PHẢI thực hiện việc này mỗi khi bắt đầu chat mới, không có ngoại lệ
+
+## TẤT CẢ QUY TẮC ĐỀU TỰ ĐỘNG ÁP DỤNG
+
+Đây là điểm CỰC KỲ QUAN TRỌNG - tất cả các quy tắc được liệt kê trong tài liệu này phải được áp dụng tự động mà không cần nhắc nhở:
+
+1. Không cần người dùng nhắc AI đọc memory bank - AI PHẢI chủ động đọc memory bank ngay khi nhận lệnh VAN
+2. Không cần người dùng nhắc AI kết nối MCP Server - AI PHẢI tự động kết nối khi phát hiện URL
+3. Không cần người dùng nhắc AI đọc quy tắc - AI PHẢI đã đọc và ghi nhớ các quy tắc này
+4. Không bao giờ được hỏi người dùng có cần thực hiện các bước tự động hay không
+5. Không bao giờ được giải thích về những quy trình đã được tự động hóa trừ khi có lỗi
+6. Các quy tắc này là bắt buộc và KHÔNG THỂ BỎ QUA trong bất kỳ tình huống nào
+7. Tất cả AI khi sử dụng lệnh VAN, PHẢI đã đọc và áp dụng tất cả các quy tắc này
+8. Trách nhiệm chủ động áp dụng quy tắc thuộc về AI, không cần người dùng nhắc nhở
+9. **TỐI ƯU HÓA SỐ LƯỢNG LỆNH CHẠY - CHỈ CHẠY MỘT LỆNH DUY NHẤT** cho mỗi loại URL (Wiki/Jira/Figma), kết hợp tất cả tham số cần thiết
+10. **KHÔNG BAO GIỜ** chạy nhiều lệnh cho cùng một URL, dù có nhiều tham số khác nhau
+
+## QUY TẮC CẤU TRÚC MÃ NGUỒN MCP
+
+Duy trì cấu trúc mã nguồn rõ ràng và dễ bảo trì trong MCP Server rất quan trọng:
+
+1. **KHÔNG BAO GIỜ THÊM LÔ-GIC XỬ LÝ MỚI TRỰC TIẾP VÀO index.js** - index.js chỉ nên là điểm vào cho các modules khác
+2. **TUYỆT ĐỐI KHÔNG VIẾT HÀM MỚI TRONG index.js** - Tất cả hàm xử lý phải được đặt trong các module riêng biệt (handlers, utils, api, v.v.)
+3. **KHÔNG TẠO FILE README.md HOẶC BẤT KỲ TÀI LIỆU NÀO TRONG THƯ MỤC temp** - thư mục temp chỉ dùng để lưu tạm file và sẽ được xóa
+4. **ĐỌC KỸ MÃ NGUỒN HIỆN CÓ TRƯỚC KHI TẠO HÀM MỚI** - luôn tìm hiểu xem đã có hàm tương tự hay chưa và tái sử dụng
+5. **TRÁNH TẠO HÀM TRÙNG LẶP HOẶC TƯƠNG TỰ** - nếu phát hiện hàm đã tồn tại với chức năng tương tự, hãy sử dụng lại
+6. **PHẢI HIỂU RÕ CẤU TRÚC VÀ CHỨC NĂNG CỦA CODE** - đọc kỹ các module để nắm rõ cách hệ thống hoạt động
+7. Khi cần thêm tính năng mới, PHẢI tạo hoặc sửa các hàm trong module tương ứng, KHÔNG THÊM vào index.js
+8. Khi hiển thị hướng dẫn hoặc trợ giúp, LUÔN TÌM VÀ SỬ DỤNG các hàm hiện có, KHÔNG TẠO hàm tương tự mới
+9. Chức năng xử lý lệnh đã được mô-đun hóa, mỗi loại lệnh có module xử lý riêng, nên tìm hiểu và sử dụng lại
+10. File đính kèm nên được lưu tạm vào thư mục temp và TỰ ĐỘNG XÓA sau khi xử lý, KHÔNG ĐỂ LẠI file tài liệu nào
+11. **TUÂN THỦ NGHIÊM NGẶT NGUYÊN TẮC TRÁCH NHIỆM ĐƠN LẺ** - mỗi module chỉ chịu trách nhiệm cho một loại chức năng
+12. Mọi thay đổi phải duy trì TÍNH NHẤT QUÁN của cấu trúc code, pattern, và quy ước đặt tên
+13. **SỬ DỤNG CÁC MODULE CHUYÊN BIỆT** - Sử dụng formatter.js cho định dạng đầu ra, system.js cho chức năng hệ thống, analyzer.js cho phân tích file
+
+## CẤU TRÚC MODULE MCP SERVER
+
+MCP Server đã được tái cấu trúc để tối ưu hóa hiệu suất và khả năng bảo trì:
+
+1. **index.js**: Điểm vào chính, chỉ chịu trách nhiệm điều phối lệnh đến các handler
+2. **handlers/**: Chứa các handler xử lý từng loại lệnh cụ thể
+   - **commandHandler.js**: Điều phối lệnh đến các handler chuyên biệt
+   - **jiraHandler.js**: Xử lý các lệnh liên quan đến Jira
+   - **wikiHandler.js**: Xử lý các lệnh liên quan đến Wiki
+   - **figmaHandler.js**: Xử lý các lệnh liên quan đến Figma
+3. **api/**: Chứa các module giao tiếp với API bên ngoài
+   - **api.js**: Module tổng hợp các API
+   - **jiraAPI.js**: Giao tiếp với Jira API
+   - **wikiAPI.js**: Giao tiếp với Wiki API
+   - **figmaAPI.js**: Giao tiếp với Figma API
+4. **utils/**: Chứa các tiện ích dùng chung
+   - **utils.js**: Các hàm tiện ích chung
+   - **scanner.js**: Quét và phân tích tin nhắn
+   - **server.js**: Quản lý kết nối server
+   - **formatter.js**: Định dạng dữ liệu đầu ra
+   - **system.js**: Quản lý các chức năng hệ thống
+   - **analyzer.js**: Phân tích nội dung file đính kèm
+   - **help.js**: Hiển thị trợ giúp
+5. **config/**: Chứa các cấu hình
+   - **config.js**: Cấu hình chung
+6. **temp/**: Thư mục lưu trữ tạm thời (tự động xóa sau khi xử lý)
+
+## HIỂN THỊ DỮ LIỆU TỐI ƯU
+
+MCP Server đã được tối ưu hóa để hiển thị dữ liệu súc tích và dễ đọc:
+
+1. **Loại bỏ các thông báo thừa** - Không hiển thị các thông báo không cần thiết
+2. **Sử dụng emoji trực quan** - Sử dụng emoji để phân loại thông tin:
+   - 📷 Ảnh
+   - 🎬 Video
+   - 📄 Tài liệu
+   - 📦 File khác
+   - 💬 Comments
+   - 🔹 Thông tin cơ bản
+   - 📝 Mô tả
+3. **Định dạng đầu ra ngắn gọn** - Hiển thị thông tin quan trọng một cách súc tích
+4. **Phân loại file đính kèm** - Nhóm các file đính kèm theo loại để dễ theo dõi
+5. **Hiển thị comments có cấu trúc** - Hiển thị comments gần đây nhất và có cấu trúc rõ ràng
+
+## LUÔN LOẠI BỎ LOG KHÔNG CẦN THIẾT
+
+Khi phát triển hoặc sửa đổi MCP Server, PHẢI tuân thủ các quy tắc về log:
+
+1. **KHÔNG THÊM LOG CONSOLE KHÔNG CẦN THIẾT** - Chỉ giữ lại các log quan trọng cho lỗi
+2. **KHÔNG THÊM BANNER HOẶC TEXT TRANG TRÍ** - Hiển thị thông tin một cách trực tiếp và súc tích
+3. **KHÔNG THÊM THÔNG BÁO THỪA** - Chỉ hiển thị thông tin cần thiết
+4. **KHÔNG THÊM TEXT HARD-CODED** - Sử dụng các hàm định dạng trong formatter.js
+5. **KHÔNG THÊM CÁC PHÂN TÍCH KHÔNG CẦN THIẾT** - Chỉ phân tích và hiển thị thông tin quan trọng
+
+## QUY TẮC PHÁT TRIỂN FRONTEND
+
+Khi phát triển các tính năng frontend, PHẢI tuân thủ các quy tắc sau:
+
+1. **ƯU TIÊN SỬA RULE MEMORY BANK VÀ CURSOR RULES** - Khi có yêu cầu sửa rule, PHẢI đặt việc này lên ưu tiên hàng đầu trước khi thực hiện các tác vụ khác. PHẢI kiểm tra và cập nhật CẢ HAI nơi: memory bank và cursor rules nếu cần thiết. **TUYỆT ĐỐI KHÔNG** được chỉ cập nhật một nơi mà bỏ qua nơi còn lại.
+
+2. **TUÂN THỦ THIẾT KẾ FIGMA 100%** - Xem chi tiết tại phần **QUY TẮC TUYỆT ĐỐI TUÂN THỦ FIGMA 100%**
+
+3. **SỬA LỖI LINTER, TYPE CHECKING, COMPILE, RUNTIME** - Xem chi tiết tại phần **QUY TẮC SỬA LỖI LINTER, TYPE CHECKING, COMPILE, RUNTIME**
+
+4. **TUÂN THỦ DESIGN SYSTEM**:
+   - Sử dụng Ant Design làm thư viện UI chính
+   - Kết hợp với Tailwind CSS cho các style tùy chỉnh
+   - **KHÔNG SỬ DỤNG FILE CSS RIÊNG BIỆT** - Không tạo file CSS riêng biệt (.css)
+   - Khi cần style phức tạp, sử dụng styled-components hoặc CSS-in-JS
+
+5. **ĐẢM BẢO RESPONSIVE** - Thiết kế phải hoạt động tốt trên tất cả các thiết bị
+
+6. **PHÂN TÍCH LỖI TRƯỚC KHI SỬA CODE** - Xem chi tiết tại phần **QUY TRÌNH PHÂN TÍCH VÀ SỬA LỖI**
+
+7. **TUÂN THỦ TYPESCRIPT** - Sử dụng TypeScript cho tất cả các component và function mới
+
+8. **TÁCH BIỆT LOGIC VÀ UI** - Tạo các components có thể tái sử dụng, tách biệt logic và giao diện
+
+### Quy tắc code quality bắt buộc:
+
+- **LUÔN THÊM** key prop cho các phần tử trong array
+- **KHÔNG ĐỂ** biến được khai báo nhưng không sử dụng
+- **TUÂN THỦ** quy ước đặt tên: camelCase cho biến và hàm, PascalCase cho component và interface
+- **LUÔN THÊM** directive "use client" cho các client components sử dụng React hooks
+
+## QUY TẮC TUYỆT ĐỐI TUÂN THỦ FIGMA 100%
+
+- **PHẢI làm đúng thiết kế Figma 100% đến từng chi tiết nhỏ nhất:**
+  - Từng text, từng icon, từng trạng thái (hover, active, disabled, error, focus)
+  - Từng spacing, từng padding, từng margin, từng khoảng cách giữa các phần tử
+  - Từng label, từng mô tả, từng placeholder, từng tooltip
+  - Từng button, từng input, từng radio/checkbox/tab, từng dropdown
+  - Từng màu sắc, từng font, từng font-weight, từng font-size
+  - Từng border, từng border-radius, từng shadow, từng opacity
+  - Từng pixel, từng vị trí, từng kích thước
+  - Từng thành phần UI như thanh search, filter, pagination
+  - Từng trạng thái của dữ liệu (loading, empty, error, success)
+  - Từng animation, transition, và hiệu ứng
+
+- **KHÔNG ĐƯỢC tự ý thay đổi thiết kế dưới BẤT KỲ hình thức nào:**
+  - KHÔNG được tự ý thay đổi bố cục, vị trí, thứ tự các thành phần
+  - KHÔNG được tự ý thay đổi màu sắc, font chữ, kích thước, khoảng cách
+  - KHÔNG được tự ý thay đổi nội dung text, placeholder, label, mô tả
+  - KHÔNG được tự ý thay đổi icon, hình ảnh, animation
+  - KHÔNG được tự ý thay đổi component (ví dụ: dùng Radio thay vì Checkbox)
+  - KHÔNG được tự ý thay đổi, giản lược, hoặc "làm gần giống" bất kỳ phần nào
+  - KHÔNG được tự ý thêm, bớt, hoặc điều chỉnh bất kỳ chi tiết nào
+  - KHÔNG được bỏ qua bất kỳ thành phần UI nào trong thiết kế (như thanh search, filter, pagination)
+  - KHÔNG được bỏ qua bất kỳ trạng thái nào của giao diện (như empty state, loading state)
+
+- **QUY TRÌNH PHÂN TÍCH THIẾT KẾ FIGMA TRƯỚC KHI CODE:**
+  - PHẢI phân tích kỹ lưỡng toàn bộ thiết kế Figma trước khi bắt đầu code
+  - PHẢI liệt kê tất cả các thành phần UI có trong thiết kế
+  - PHẢI kiểm tra tất cả các layer, group, và component trong file Figma
+  - PHẢI kiểm tra các trạng thái khác nhau của giao diện (nếu có)
+  - PHẢI kiểm tra các biến thể của component (nếu có)
+  - PHẢI kiểm tra các thuộc tính chính xác (màu sắc, font, kích thước) từ Figma
+  - PHẢI đảm bảo không bỏ sót bất kỳ chi tiết nào trong thiết kế
+
+- **QUY TRÌNH KIỂM TRA TRƯỚC KHI BÁO HOÀN THÀNH:**
+  - PHẢI so sánh trực tiếp với ảnh chụp màn hình hoặc file thiết kế Figma
+  - PHẢI kiểm tra từng chi tiết, từng pixel, từng text, từng spacing
+  - PHẢI sửa cho đến khi GIỐNG HOÀN TOÀN 100%, không còn bất kỳ điểm nào khác biệt
+  - PHẢI kiểm tra tất cả các trạng thái (hover, active, disabled, error, focus)
+  - PHẢI kiểm tra responsive trên các kích thước màn hình khác nhau (nếu có)
+  - PHẢI kiểm tra lại từng thành phần UI đã được liệt kê trong bước phân tích
+  - CHỈ được báo hoàn thành khi đã kiểm tra kỹ và KHÔNG CÒN BẤT KỲ ĐIỂM NÀO KHÁC BIỆT
+
+- **TUYỆT ĐỐI KHÔNG ĐƯỢC BÁO HOÀN THÀNH khi chưa giống 100% thiết kế Figma**
+
+- **TUYỆT ĐỐI KHÔNG ĐƯỢC TỰ SÁNG TẠO khi không xem được thiết kế Figma**
+  - Nếu không kết nối được MCP Server hoặc không xem được thiết kế Figma, KHÔNG ĐƯỢC tự ý vẽ giao diện
+  - PHẢI báo cáo lỗi kết nối và đề xuất cách khắc phục MCP Server
+  - CHỈ thực hiện vẽ giao diện khi đã xem được thiết kế Figma đầy đủ
+  - PHẢI đảm bảo hiểu rõ 100% thiết kế trước khi bắt đầu code
+  - KHÔNG ĐƯỢC phỏng đoán hoặc tự sáng tạo bất kỳ phần nào của giao diện khi không thấy rõ thiết kế
+  - Khi không xem được thiết kế, PHẢI ưu tiên sửa lỗi kết nối MCP Server trước khi tiếp tục
+
+## QUY TẮC SỬA LỖI LINTER, TYPE CHECKING, COMPILE, RUNTIME
+
+- **PHẢI SỬA BẰNG ĐƯỢC TẤT CẢ LỖI** trước khi hoàn thành bất kỳ nhiệm vụ nào liên quan đến code:
+  - Lỗi ESLint (yarn lint)
+  - Lỗi TypeScript (yarn tsc --noEmit)
+  - Lỗi Compile (như thiếu directive "use client")
+  - Lỗi Runtime
+  - Warnings (kể cả warning nhỏ nhất)
+
+- **KHÔNG ĐƯỢC BỎ QUA BẤT KỲ LỖI NÀO** – kể cả lỗi nhỏ nhất, kể cả khi chỉ là warning
+
+- **QUY TRÌNH KIỂM TRA TRƯỚC KHI BÁO HOÀN THÀNH:**
+  - PHẢI chạy lệnh `yarn lint` và `yarn tsc --noEmit` để kiểm tra
+  - PHẢI kiểm tra console trong developer tools để đảm bảo không có lỗi runtime
+  - PHẢI sửa tất cả lỗi và warnings được phát hiện
+  - CHỈ được báo hoàn thành khi code hoàn toàn sạch lỗi
+
+- **TUYỆT ĐỐI KHÔNG ĐƯỢC BÁO HOÀN THÀNH khi code còn lỗi hoặc warning**
+
+# Quy tắc đồng bộ rule
+- Khi sửa rule về workflow, quy trình phát triển, hoặc quy tắc frontend, PHẢI cập nhật đồng thời cả memory bank và cursor rules, không được bỏ sót nơi nào.
+- Nếu có sự khác biệt giữa hai nơi, phải đồng bộ lại cho nhất quán.
+- View/page KHÔNG được lặp lại Header/Footer/ContactSidebar nếu đã có ở layout, chỉ render phần nội dung đặc thù.
+

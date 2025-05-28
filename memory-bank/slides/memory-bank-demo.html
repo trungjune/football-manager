@@ -1,0 +1,1605 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Bank + Cursor - Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reset.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/night.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/monokai.css" />
+    <style>
+      /* CSS tích hợp để khắc phục lỗi hiển thị */
+      :root {
+        --r-main-color: #f5f5f5;
+        --r-heading-color: #2196f3;
+        --r-link-color: #64b5f6;
+        --r-selection-background-color: #2196f3;
+      }
+
+      body {
+        background: #191919;
+        color: #ffffff;
+      }
+
+      /* Đảm bảo nội dung nằm gọn và ở giữa màn hình */
+      .reveal .slides section {
+        height: auto !important;
+        min-height: auto !important;
+        box-sizing: border-box;
+        padding: 15px 25px 40px 25px;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        overflow: visible !important;
+      }
+
+      /* Fix lỗi hiển thị */
+      .reveal .slides > section,
+      .reveal.has-vertical-slides .slides > section {
+        overflow: visible !important;
+      }
+
+      /* Đảm bảo không tràn chữ và kích thước phù hợp hơn */
+      .reveal .slides {
+        text-align: left;
+
+        font-size: 1em;
+        width: 100%;
+        height: 100%;
+        overflow: visible !important;
+      }
+
+      /* Căn giữa slide */
+      .reveal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .reveal .slides {
+        max-width: 95%;
+        margin: 0 auto;
+      }
+
+      /* SVG đồ họa luôn hiển thị đúng */
+      .reveal img[src^='data:image/svg+xml'] {
+        background: transparent !important;
+        box-shadow: none !important;
+        max-width: 90% !important;
+        height: auto !important;
+        margin: 10px auto !important;
+        display: block !important;
+      }
+
+      .reveal .slide-background {
+        background-color: #191919 !important;
+      }
+
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none;
+        font-weight: 600;
+        color: var(--r-heading-color);
+        margin-bottom: 0.5em;
+        line-height: 1.2;
+      }
+
+      .reveal h1 {
+        font-size: 2.2em;
+      }
+      .reveal h2 {
+        font-size: 1.8em;
+      }
+      .reveal h3 {
+        font-size: 1.5em;
+      }
+      .reveal h4 {
+        font-size: 1.3em;
+      }
+
+      .reveal pre {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      .reveal section img {
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        margin: 15px 0;
+        max-height: 60vh;
+        max-width: 100%;
+      }
+
+      /* Grid và container styles với spacing lớn hơn */
+      .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 20px;
+        width: 100%;
+      }
+
+      .feature-box {
+        background: rgba(33, 150, 243, 0.1);
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        position: relative;
+        overflow: visible !important;
+      }
+
+      .feature-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(33, 150, 243, 0.2);
+      }
+
+      .feature-icon {
+        font-size: 1.5em;
+        margin-right: 10px;
+        color: var(--r-heading-color);
+      }
+
+      /* Bảng so sánh */
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 1em;
+        table-layout: fixed;
+      }
+
+      .comparison-table th {
+        background-color: var(--r-heading-color);
+        color: white;
+        padding: 8px;
+        white-space: normal !important;
+        word-wrap: break-word;
+        vertical-align: top;
+      }
+
+      .comparison-table td {
+        padding: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        white-space: normal !important;
+        word-wrap: break-word;
+        vertical-align: top;
+        min-width: 50px;
+      }
+
+      /* Đảm bảo bảng hiển thị đẹp hơn */
+      .comparison-table tr:nth-child(odd) td {
+        background-color: rgba(33, 150, 243, 0.03);
+      }
+
+      .comparison-table tr:hover td {
+        background-color: rgba(33, 150, 243, 0.1);
+      }
+
+      .highlight-text {
+        color: #64b5f6;
+        font-weight: bold;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      /* CASE STUDY STYLES - Cải thiện để hiển thị đủ nội dung */
+      .reveal section h2 {
+        margin-bottom: 20px;
+      }
+
+      .case-study {
+        background: rgba(100, 181, 246, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid #2196f3;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        overflow: visible !important;
+        max-width: 100%;
+        margin-bottom: 40px;
+        position: relative;
+      }
+
+      .case-title {
+        font-size: 1.4em;
+        margin-bottom: 20px;
+        color: #2196f3;
+        display: flex;
+        align-items: center;
+      }
+
+      .case-icon {
+        font-size: 1.8em;
+        margin-right: 15px;
+        color: #2196f3;
+      }
+
+      .process-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .process-step {
+        display: flex;
+        margin: 8px 0;
+        align-items: flex-start;
+        width: 100%;
+        font-size: 0.95em;
+        overflow: visible !important;
+        min-height: 24px;
+      }
+
+      .step-arrow {
+        margin: 0 auto;
+        color: var(--r-heading-color);
+        font-size: 1.5em;
+        flex-shrink: 0;
+        text-align: center;
+        width: 100%;
+        display: block;
+        padding: 5px 0;
+        font-weight: bold;
+      }
+
+      /* Phần mô tả bước */
+      .process-step span:last-child {
+        flex-grow: 1;
+        line-height: 1.2;
+        white-space: normal;
+      }
+
+      .mode-badge {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        padding: 4px 6px;
+        border-radius: 4px;
+        margin-right: 15px;
+        font-weight: bold;
+        background: rgba(33, 150, 243, 0.2);
+        min-width: 100px;
+        height: 22px;
+        text-align: center;
+        flex-shrink: 0;
+        white-space: nowrap;
+        margin-top: 2px;
+      }
+
+      /* Các loại case study khác nhau */
+      .new-feature {
+        border-left-color: #4caf50;
+      }
+      .new-feature .case-icon,
+      .new-feature .case-title {
+        color: #4caf50;
+      }
+
+      .update-feature {
+        border-left-color: #ff9800;
+      }
+      .update-feature .case-icon,
+      .update-feature .case-title {
+        color: #ff9800;
+      }
+
+      .bug-fix {
+        border-left-color: #f44336;
+      }
+      .bug-fix .case-icon,
+      .bug-fix .case-title {
+        color: #f44336;
+      }
+
+      /* Sửa lỗi scale */
+      .reveal {
+        font-size: 24px; /* Tăng kích thước font chung */
+      }
+
+      /* Thêm animation cho các phần tử */
+      .reveal .slides section .fragment {
+        opacity: 0;
+        transition: all 0.5s ease;
+      }
+
+      .reveal .slides section .fragment.visible {
+        opacity: 1;
+      }
+
+      .reveal .slides section .fragment.grow {
+        transform: scale(0.8);
+      }
+
+      .reveal .slides section .fragment.grow.visible {
+        transform: scale(1);
+      }
+
+      /* Thêm section mới cho Memory Bank Access */
+      .memory-bank-access {
+        background: rgba(156, 39, 176, 0.1);
+        border-radius: 8px;
+        padding: 15px;
+        border-left: 4px solid #9c27b0;
+        margin-top: 20px;
+      }
+
+      .memory-bank-access h4 {
+        color: #9c27b0;
+      }
+
+      /* Thiết lập responsive tốt hơn */
+      @media (max-width: 1200px) {
+        .reveal {
+          font-size: 20px;
+        }
+
+        .grid-container {
+          grid-gap: 15px;
+        }
+      }
+
+      @media (max-width: 800px) {
+        .reveal {
+          font-size: 18px;
+        }
+
+        .grid-container {
+          grid-template-columns: 1fr;
+        }
+
+        .mode-badge {
+          width: 90px;
+          font-size: 0.9em;
+        }
+      }
+
+      /* Thêm hiệu ứng cho toàn bộ slide */
+      .reveal section {
+        transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+      }
+
+      /* Điều chỉnh scale để hiển thị đủ nội dung */
+      .reveal.slide .slides > section,
+      .reveal.slide .slides > section > section {
+        min-height: auto !important;
+        overflow: visible !important;
+      }
+
+      /* Tối ưu chiều cao của slide */
+      .reveal .slides > section {
+        overflow: visible !important;
+      }
+
+      /* Đảm bảo hiển thị đủ nội dung case studies */
+      .case-study:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Đảm bảo hiển thị đủ nội dung */
+      .reveal .slides section[data-id^='case'],
+      .reveal .slides section[data-id='solution-comparison'] {
+        height: auto !important;
+        min-height: auto !important;
+        padding-bottom: 50px !important;
+        overflow: visible !important;
+      }
+
+      /* Đảm bảo SVG biểu đồ luôn hiển thị đúng */
+      .reveal .slides section img[src^='data:image/svg+xml'] {
+        max-width: 100% !important;
+        max-height: 200px !important;
+        width: auto !important;
+        height: auto !important;
+        margin: 0 auto !important;
+        display: block !important;
+      }
+
+      /* Tăng contrast cho text */
+      body,
+      .reveal {
+        color: #ffffff;
+      }
+
+      /* Fix lỗi hiển thị đồ họa Memory Bank */
+      .feature-box img {
+        max-width: 100% !important;
+        max-height: 250px !important;
+        object-fit: contain !important;
+        margin: 0 auto !important;
+      }
+
+      /* Fix lỗi hiển thị bảng so sánh giải pháp AI */
+      .reveal .slides section[data-id='solution-comparison'] {
+        overflow: visible !important;
+        height: auto !important;
+        padding-bottom: 150px !important;
+        max-width: 100% !important;
+        max-height: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        transform: scale(0.9) !important;
+        transform-origin: top center !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        position: relative !important;
+      }
+
+      .reveal .slides section[data-id='solution-comparison'] h2 {
+        margin-bottom: 15px !important;
+        font-size: 2em !important;
+        width: 100% !important;
+        text-align: center !important;
+      }
+
+      .comparison-table-wrapper {
+        width: 95% !important;
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+        transform: none !important;
+        overflow: visible !important;
+        font-size: 0.85em !important;
+      }
+
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table {
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 2px;
+        width: 100% !important;
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+        overflow: visible !important;
+        transform: none !important;
+        font-size: 16px !important;
+      }
+
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table th,
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table td {
+        padding: 6px 4px !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        font-size: 0.9em !important;
+        line-height: 1.2 !important;
+      }
+
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table th {
+        font-size: 1em !important;
+        font-weight: bold !important;
+        padding: 8px 4px !important;
+        height: auto !important;
+        white-space: normal !important;
+        vertical-align: middle !important;
+      }
+
+      /* Điều chỉnh độ rộng cột */
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table th:nth-child(1),
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table td:nth-child(1) {
+        width: 12% !important;
+      }
+
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table th:nth-child(2),
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table td:nth-child(2) {
+        width: 12% !important;
+      }
+
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table th:nth-child(3),
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table td:nth-child(3) {
+        width: 8% !important;
+      }
+
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table th:nth-child(4),
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table td:nth-child(4) {
+        width: 17% !important;
+      }
+
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table th:nth-child(5),
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table td:nth-child(5) {
+        width: 17% !important;
+      }
+
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table th:nth-child(6),
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table td:nth-child(6) {
+        width: 17% !important;
+      }
+
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table th:nth-child(7),
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table td:nth-child(7) {
+        width: 7% !important;
+      }
+
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table th:nth-child(8),
+      .reveal .slides section[data-id='solution-comparison'] .comparison-table td:nth-child(8) {
+        width: 12% !important;
+      }
+
+      /* Thêm breakpoints để điều chỉnh bảng theo kích thước màn hình */
+      @media (max-width: 1200px) {
+        .reveal .slides section[data-id='solution-comparison'] .comparison-table th,
+        .reveal .slides section[data-id='solution-comparison'] .comparison-table td {
+          padding: 5px 3px !important;
+          font-size: 0.85em !important;
+        }
+      }
+
+      @media (max-width: 1000px) {
+        .reveal .slides section[data-id='solution-comparison'] .comparison-table th,
+        .reveal .slides section[data-id='solution-comparison'] .comparison-table td {
+          padding: 4px 2px !important;
+          font-size: 0.8em !important;
+        }
+      }
+
+      .roadmap-phase3 {
+        background: rgba(156, 39, 176, 0.1);
+        border-left: 4px solid #9c27b0;
+        margin-top: 10px;
+        padding: 10px;
+        font-size: 0.95em;
+      }
+
+      .roadmap-results {
+        background: rgba(255, 152, 0, 0.1);
+        border-left: 4px solid #ff9800;
+        margin-top: 10px;
+        padding: 10px 10px 25px 10px;
+        text-align: center;
+        font-size: 0.95em;
+      }
+
+      /* Đảm bảo hiển thị đầy đủ nội dung cho slide lộ trình */
+      .roadmap-section {
+        height: auto !important;
+        min-height: auto !important;
+        overflow: visible !important;
+        padding-bottom: 180px !important;
+        box-sizing: border-box;
+        transform: scale(0.9);
+        transform-origin: top center;
+      }
+
+      .roadmap-section .grid-container {
+        overflow: visible !important;
+      }
+
+      .roadmap-section ul {
+        margin-top: 3px;
+        margin-bottom: 3px;
+      }
+
+      .roadmap-section ul ul {
+        margin-bottom: 0;
+      }
+
+      .roadmap-section li {
+        margin-bottom: 4px;
+        line-height: 1.2;
+      }
+
+      .roadmap-section p {
+        margin-bottom: 8px;
+      }
+
+      /* Cập nhật code để hiển thị tốt ở zoom thấp */
+      @media screen and (max-height: 768px), (max-width: 1366px) {
+        .roadmap-section {
+          padding-bottom: 220px !important;
+          transform: scale(0.85);
+          transform-origin: top center;
+        }
+
+        .roadmap-section .feature-box {
+          margin-top: 10px !important;
+          padding: 10px;
+        }
+
+        .roadmap-section h3 {
+          margin-top: 0;
+          margin-bottom: 10px;
+          font-size: 1.3em;
+        }
+
+        .roadmap-section ul {
+          margin-top: 2px;
+          margin-bottom: 2px;
+        }
+
+        .roadmap-section li {
+          margin-bottom: 2px;
+          line-height: 1.1;
+        }
+
+        .roadmap-phase3,
+        .roadmap-results {
+          padding: 8px;
+          margin-top: 8px;
+        }
+      }
+
+      /* Điều chỉnh cho zoom rất thấp */
+      @media screen and (max-height: 600px) {
+        .roadmap-section {
+          transform: scale(0.8);
+          padding-bottom: 250px !important;
+        }
+      }
+
+      /* Cải thiện hiển thị sơ đồ Memory Bank trên slide 5 cho mọi thiết bị */
+      .reveal .slides section:nth-child(5) {
+        overflow: visible !important;
+        height: auto !important;
+        min-height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        padding-bottom: 100px !important;
+        transform: none !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        position: relative !important;
+      }
+
+      .reveal .slides section:nth-child(5) h2 {
+        margin-bottom: 25px !important;
+        font-size: 2.3em !important;
+        width: 100% !important;
+        text-align: center !important;
+      }
+
+      /* Điều chỉnh khoảng cách giữa các box trong grid container */
+      .reveal .slides section:nth-child(5) .grid-container {
+        width: 95% !important;
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+        grid-gap: 30px !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      /* Đảm bảo feature-box đủ cao để chứa SVG và nội dung */
+      .reveal .slides section:nth-child(5) .feature-box {
+        overflow: visible !important;
+        height: auto !important;
+        min-height: 600px !important;
+        max-height: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        padding: 20px !important;
+        transform: none !important;
+        border-radius: 10px !important;
+        margin-bottom: 20px !important;
+        width: 100% !important;
+        max-width: 600px !important;
+      }
+
+      /* Điều chỉnh thêm cho đồ thị SVG */
+      .reveal .slides section:nth-child(5) img[src^='data:image/svg+xml'] {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: 450px !important;
+        margin: 10px auto !important;
+        object-fit: contain !important;
+        transform: none !important;
+      }
+
+      .reveal .slides section:nth-child(5) h3 {
+        margin-top: 0 !important;
+        margin-bottom: 20px !important;
+        font-size: 1.6em !important;
+        color: #2196f3 !important;
+      }
+
+      .reveal .slides section:nth-child(5) ul {
+        margin-top: 15px !important;
+        margin-bottom: 15px !important;
+        padding-left: 30px !important;
+        font-size: 1.25em !important;
+        width: 100% !important;
+      }
+
+      .reveal .slides section:nth-child(5) ul li {
+        margin-bottom: 12px !important;
+        line-height: 1.5 !important;
+      }
+
+      .reveal .slides section:nth-child(5) p {
+        margin: 15px 0 !important;
+        text-align: center !important;
+        font-size: 1.25em !important;
+        line-height: 1.5 !important;
+      }
+
+      /* Hiệu ứng đặc biệt cho slide 5 ở zoom thấp */
+      @media screen and (max-height: 700px), (max-width: 1200px) {
+        .reveal .slides section:nth-child(5) .feature-box {
+          padding: 15px !important;
+          min-height: 550px !important;
+        }
+
+        .reveal .slides section:nth-child(5) img[src^='data:image/svg+xml'] {
+          max-height: 350px !important;
+        }
+      }
+
+      @media screen and (max-height: 600px), (max-width: 1000px) {
+        .reveal .slides section:nth-child(5) .feature-box {
+          min-height: 500px !important;
+        }
+      }
+
+      /* Cải thiện hiển thị đồ họa Memory Bank cho slide 5 */
+      .reveal .slides section:nth-child(5) .feature-box img {
+        max-width: 100% !important;
+        max-height: 100% !important;
+        object-fit: contain !important;
+        margin: 0 auto !important;
+        transform: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- Slide 1: Trang bìa -->
+        <section data-transition="zoom" class="text-center">
+          <h1>Memory Bank + Cursor</h1>
+          <h3>Nâng cao hiệu suất phát triển dự án</h3>
+          <p>
+            <small>Thứ 4, 14:00 - 15:00 | Phòng họp 1</small>
+          </p>
+        </section>
+
+        <!-- Slide 2: Agenda -->
+        <section>
+          <h2>Nội dung buổi demo</h2>
+          <ol>
+            <li class="fragment">Giới thiệu tổng quan về Memory Bank + Cursor</li>
+            <li class="fragment">Cài đặt và thiết lập</li>
+            <li class="fragment">
+              Demo 3 trường hợp sử dụng thực tế:
+              <ul>
+                <li>Phát triển tính năng mới</li>
+                <li>Cập nhật tính năng có sẵn</li>
+                <li>Fix bug</li>
+              </ul>
+            </li>
+            <li class="fragment">Thảo luận và Q&A</li>
+          </ol>
+        </section>
+
+        <!-- Slide mới: Memory Bank là gì? -->
+        <section>
+          <h2>Memory Bank là gì?</h2>
+          <div class="grid-container">
+            <div>
+              <p>
+                Memory Bank là hệ thống tài liệu có cấu trúc giúp AI trợ lý <strong>duy trì context</strong> qua các
+                phiên làm việc khác nhau.
+              </p>
+              <div class="feature-box" style="max-width: 700px; margin: 0 auto 24px auto; text-align: center">
+                <span class="feature-icon">📝</span>
+                <strong>Định nghĩa</strong>
+                <p>Bộ tài liệu Markdown với cấu trúc chuẩn hóa, lưu trữ kiến thức dự án và tiến độ hiện tại</p>
+              </div>
+            </div>
+            <div>
+              <div class="feature-box" style="max-width: 700px; margin: 0 auto 24px auto; text-align: center">
+                <span class="feature-icon">🔄</span>
+                <strong>Hoạt động</strong>
+                <p>AI đọc Memory Bank tại mỗi phiên làm việc mới để "nhớ" toàn bộ ngữ cảnh dự án</p>
+              </div>
+              <div class="feature-box" style="max-width: 700px; margin: 0 auto 24px auto; text-align: center">
+                <span class="feature-icon">🔍</span>
+                <strong>Lưu trữ</strong>
+                <p>Các file .md được lưu trong thư mục memory-bank của dự án, dễ đọc và chỉnh sửa</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide mới: Lợi ích chính -->
+        <section>
+          <h2>Lợi ích chính của Memory Bank + Cursor</h2>
+          <div class="grid-container">
+            <div>
+              <div class="feature-box fragment fade-in">
+                <span class="feature-icon">💡</span>
+                <strong>Trí nhớ dài hạn</strong>
+                <p>AI duy trì context qua nhiều ngày, tuần, tháng không giới hạn</p>
+              </div>
+              <div class="feature-box fragment fade-in">
+                <span class="feature-icon">📊</span>
+                <strong>Quy trình chuẩn hóa</strong>
+                <p>Các MODE với luồng công việc nhất quán, dự đoán được</p>
+              </div>
+            </div>
+            <div>
+              <div class="feature-box fragment fade-in">
+                <span class="feature-icon">🔄</span>
+                <strong>Tích hợp với Cursor</strong>
+                <p>Tự động đọc/ghi memory-bank, truy cập nhanh bằng lệnh</p>
+              </div>
+              <div class="feature-box fragment fade-in">
+                <span class="feature-icon">📈</span>
+                <strong>Scale theo độ phức tạp</strong>
+                <p>Level 1-4 cho phép xử lý từ bug đơn giản đến hệ thống phức tạp</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide mới: Cải thiện bảng so sánh giải pháp AI -->
+        <section data-id="solution-comparison">
+          <h2>So sánh các giải pháp AI Development</h2>
+          <div class="comparison-table-wrapper">
+            <table class="comparison-table">
+              <tr>
+                <th style="width: 12%; background-color: #2196f3; color: white; padding: 10px 8px">🧩 Giải pháp</th>
+                <th style="width: 12%; background-color: #2196f3; color: white; padding: 10px 8px">🛠️ Nhóm công cụ</th>
+                <th style="width: 8%; background-color: #2196f3; color: white; padding: 10px 8px">🔄 Tự động hóa</th>
+                <th style="width: 17%; background-color: #2196f3; color: white; padding: 10px 8px">
+                  🧠 Khả năng chính
+                </th>
+                <th style="width: 17%; background-color: #2196f3; color: white; padding: 10px 8px">
+                  ✅ Ưu điểm nổi bật
+                </th>
+                <th style="width: 17%; background-color: #2196f3; color: white; padding: 10px 8px">⚠️ Hạn chế</th>
+                <th style="width: 7%; background-color: #2196f3; color: white; padding: 10px 8px">🔍 Khả thi</th>
+                <th style="width: 12%; background-color: #2196f3; color: white; padding: 10px 8px">
+                  🎯 Use case phù hợp
+                </th>
+              </tr>
+              <tr>
+                <td
+                  class="highlight-text"
+                  style="
+                    padding: 8px 5px;
+                    font-size: 1.1em;
+                    background-color: rgba(33, 150, 243, 0.15);
+                    font-weight: bold;
+                    border: 2px solid #2196f3;
+                  "
+                >
+                  Memory Bank (Cursor)
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Context enhancer</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">🟡 Trung bình</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Nhớ dài hạn toàn repo, rule naming, flow logic
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Auto hiểu codebase, phản hồi đúng ngữ cảnh
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Lock-in Cursor IDE, không hành động độc lập
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  ✅ <strong>Rất cao</strong>
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Phù hợp mọi level dev dự án phức tạp
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Copilot + Labs</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Coding assistant</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">🔵 Thấp</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Gen code, test, explain theo đoạn code đang viết
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Tích hợp đơn giản, hỗ trợ đa ngôn ngữ
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Không nhớ dài hạn, không hiểu cấu trúc hệ thống
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  ✅ <strong>Rất cao</strong>
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Code nhanh, boost productivity dev
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Manus</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Chat-based AI Agent</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">🟡 Trung bình</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  AI hỗ trợ viết code, review, chia task
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Giao tiếp giống mentor, hỏi lại khi cần rõ hơn
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Giá cao ($500/tháng), chưa tự động hoàn toàn
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  ⚠️ <strong>Trung bình</strong>
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Pair programming, onboarding
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Context.md + Prompt</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Prompt engineering</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">🔵 Thấp</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Ghi chú + prompt để LLM hiểu đúng context
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Chủ động, dễ chỉnh, không lock-in
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Dễ stale, cần cập nhật thủ công
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  ✅ <strong>Rất cao</strong>
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Làm rõ rule, constraint cho AI
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Cline (VSCode plugin)</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Lightweight agent</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">🟡 Trung bình</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Plan & Act trong editor, tuần tự theo chỉ dẫn
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Nhẹ, phù hợp VSCode, dễ test
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Hiểu chưa sâu, phụ thuộc môi trường VSCode
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">✅ <strong>Cao</strong></td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Refactor, sửa bug nhỏ</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Cody (Sourcegraph)</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Cross-repo AI</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">🟡 Trung bình</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Hiểu nhiều repo, trả lời câu hỏi, debug liên repo
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Tốt cho hệ thống enterprise / monorepo
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Trả phí cao, gen code chưa mạnh
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  ⚠️ <strong>Trung bình</strong>
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Onboarding nhiều service</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">AutoDev</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">AI Agent</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">🟠 Cao</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Multi-agent làm build, test, review, doc, CI/CD
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Có sandbox, security rõ, teamwork
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Setup khó, cần infra ổn định
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  ⚠️ <strong>Trung bình</strong>
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">CI/CD automation</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">HyperAgent</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Multi-agent system</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">🟠 Cao</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Agent chia task rõ: planner, coder, reviewer
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Mô phỏng teamwork AI cực tốt
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Triển khai phức tạp, chưa production
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">❌ <strong>Thấp</strong></td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Nghiên cứu, thử nghiệm</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Devin</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Full AI Agent</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">🔴 Rất cao</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Làm A-Z: clone → sửa → test → commit → deploy
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Mô phỏng dev thật – full automation
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Tốn tài nguyên lớn, chưa open, chưa ổn định
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">❌ <strong>Thấp</strong></td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Demo, R&D nội bộ</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Goose</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Interactive agent</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">🟡 Trung bình</td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Trợ lý code + hỏi lại người khi không chắc chắn
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Hợp lý, ít gây lỗi, hỗ trợ người dùng tốt
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  Hiệu quả tùy theo input / quy trình
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">
+                  ⚠️ <strong>Trung bình</strong>
+                </td>
+                <td style="padding: 8px 5px; background-color: rgba(33, 150, 243, 0.05)">Legacy migration, refactor</td>
+              </tr>
+            </table>
+          </div>
+        </section>
+
+        <!-- Slide: Sơ đồ hoạt động của Memory Bank -->
+        <section>
+          <h2>Cách thức hoạt động của Memory Bank</h2>
+          <div
+            class="feature-box"
+            style="
+              width: 100vw;
+              max-width: 100vw;
+              margin-left: 50%;
+              transform: translateX(-50%);
+              padding: 32px 0 32px 0;
+              text-align: center;
+              background: rgba(20, 40, 60, 0.85);
+              border-radius: 18px;
+            "
+          >
+            <img
+              src="./memory-bank-system.svg"
+              alt="Memory Bank System"
+              style="
+                background: transparent;
+                box-shadow: none;
+                width: 100%;
+                height: auto;
+                margin: 0 auto 10px auto;
+                display: block;
+              "
+            />
+            <p style="margin-top: 18px; font-size: 1.08em; color: #ccc">
+              Sơ đồ tổng quan các thành phần và mode chính của hệ thống Memory Bank.<br />
+              Mỗi mode đại diện cho một giai đoạn trong quy trình phát triển, đảm bảo AI luôn duy trì context và tối ưu
+              hiệu suất.
+            </p>
+          </div>
+        </section>
+
+        <!-- Slide: Thách thức trong phát triển dự án -->
+        <section>
+          <h2>Thách thức trong phát triển dự án</h2>
+          <div class="grid-container">
+            <div>
+              <h3>Trước Memory Bank</h3>
+              <ul>
+                <li class="fragment fade-in">AI quên context sau mỗi phiên</li>
+                <li class="fragment fade-in">Phải giải thích lại nhiều lần</li>
+                <li class="fragment fade-in">Thiếu quy trình chuẩn hóa</li>
+                <li class="fragment fade-in">Tài liệu không đồng bộ với code</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Với Memory Bank</h3>
+              <ul>
+                <li class="fragment fade-in">AI luôn nhớ bối cảnh dự án</li>
+                <li class="fragment fade-in">Quy trình MODE chuẩn hóa</li>
+                <li class="fragment fade-in">Tài liệu tự động cập nhật</li>
+                <li class="fragment fade-in">Onboarding dễ dàng</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide: Vì sao Cursor Memory Bank phù hợp với dự án ONEDX? -->
+        <section>
+          <h2>Vì sao Cursor Memory Bank phù hợp với dự án ONEDX?</h2>
+          <ul style="font-size: 1.08em; margin-top: 24px">
+            <li>
+              🧩 <b>Quản lý context phức tạp:</b> Dự án ONEDX là multi-portal, nhiều domain, nhiều team – Memory Bank
+              giúp AI luôn nhớ đúng ngữ cảnh từng portal.
+            </li>
+            <li>
+              🚀 <b>Onboarding nhanh:</b> Thành viên mới chỉ cần đọc Memory Bank là nắm được toàn bộ kiến trúc, quy
+              trình, không cần training thủ công.
+            </li>
+            <li>
+              🔄 <b>Quy trình chuẩn hóa:</b> MODE rõ ràng, workflow nhất quán, giảm lỗi quy trình, dễ kiểm soát chất
+              lượng.
+            </li>
+            <li>
+              🤝 <b>Tối ưu teamwork AI + dev:</b> AI và dev cùng làm việc trên nền tảng tài liệu hóa chung, không bị
+              lệch context.
+            </li>
+            <li>
+              📚 <b>Đảm bảo tài liệu hóa xuyên suốt:</b> Mọi thay đổi, quyết định, tiến độ đều được lưu lại, dễ truy vết
+              và review.
+            </li>
+            <li>
+              📈 <b>Tăng hiệu suất & chất lượng code:</b> Giảm thời gian lặp lại, AI hỗ trợ đúng trọng tâm, dev tập
+              trung vào logic.
+            </li>
+            <li>
+              🔧 <b>Dễ mở rộng & bảo trì:</b> Khi dự án phát triển thêm portal, team mới, chỉ cần bổ sung vào Memory
+              Bank, không lo mất context cũ.
+            </li>
+            <li>
+              🔒 <b>Đảm bảo tuân thủ & kiểm soát:</b> Dễ kiểm tra quy trình, audit, review lại mọi quyết định kỹ thuật.
+            </li>
+          </ul>
+        </section>
+
+        <!-- Slide: Lộ trình triển khai Memory Bank vào OneDx -->
+        <section class="roadmap-section">
+          <h2>Lộ trình triển khai Cursor Memory Bank cho ONEDX</h2>
+
+          <div class="grid-container" style="grid-gap: 15px">
+            <div>
+              <div class="feature-box" style="background: rgba(33, 150, 243, 0.1); border-left: 4px solid #2196f3">
+                <h3 style="color: #2196f3; margin: 0 0 8px 0">
+                  <span style="font-size: 1.1em">1️⃣</span> Giai đoạn 1: Setup (1 tuần)
+                </h3>
+                <ul style="font-size: 0.95em; margin-top: 5px">
+                  <li><strong>Cài đặt Cursor cho team dev</strong> (1-2 ngày)</li>
+                  <li>
+                    <strong>Tạo bộ khung Memory Bank</strong> cho ONEDX (2-3 ngày)
+                    <ul>
+                      <li>projectbrief.md: Mục tiêu, phạm vi dự án</li>
+                      <li>techContext.md: Tech stack hiện tại</li>
+                      <li>systemPatterns.md: Component pattern</li>
+                    </ul>
+                  </li>
+                  <li><strong>Cấu hình MODE rules</strong> trong Cursor (1-2 ngày)</li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <div class="feature-box" style="background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4caf50">
+                <h3 style="color: #4caf50; margin: 0 0 8px 0">
+                  <span style="font-size: 1.1em">2️⃣</span> Giai đoạn 2: Pilot (2 tuần)
+                </h3>
+                <ul style="font-size: 0.95em; margin-top: 5px">
+                  <li><strong>Chọn 2-3 dev thử nghiệm</strong> trên sprint hiện tại</li>
+                  <li>
+                    <strong>Triển khai quy trình pilot</strong> với 3 trường hợp:
+                    <ul>
+                      <li>1 tính năng mới: Tối ưu component</li>
+                      <li>1 cập nhật: Bổ sung validation form</li>
+                      <li>1 bug fix: Sửa lỗi UI/responsive</li>
+                    </ul>
+                  </li>
+                  <li><strong>Thu thập feedback</strong> và cải thiện quy trình</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-box roadmap-phase3">
+            <h3 style="color: #9c27b0; margin: 0 0 8px 0">
+              <span style="font-size: 1.1em">3️⃣</span> Giai đoạn 3: Triển khai toàn dự án (1 tháng)
+            </h3>
+            <div class="grid-container" style="grid-gap: 10px">
+              <div>
+                <ul style="font-size: 0.95em; margin-top: 5px">
+                  <li>
+                    <strong>Training toàn team</strong> (nửa ngày)
+                    <ul>
+                      <li>Workshop thực hành với các MODE</li>
+                      <li>Chạy theo kịch bản thực tế</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Bổ sung Memory Bank</strong>
+                    <ul>
+                      <li>Cập nhật đầy đủ component hiện có</li>
+                      <li>Mapping API endpoints trong dự án</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <ul style="font-size: 0.95em; margin-top: 5px">
+                  <li>
+                    <strong>Chuẩn hóa quy trình</strong>
+                    <ul>
+                      <li>Tích hợp vào CI/CD pipeline</li>
+                      <li>Review tự động với Cursor</li>
+                    </ul>
+                  </li>
+                  <li>
+                    <strong>Đo lường & Báo cáo</strong>
+                    <ul>
+                      <li>Tracking velocity trước/sau</li>
+                      <li>Đánh giá code quality metrics</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature-box roadmap-results">
+            <h3 style="color: #ff9800; margin-bottom: 8px"><span style="font-size: 1.1em">🎯</span> Kết quả dự kiến</h3>
+            <p style="font-size: 1.1em; line-height: 1.3">
+              Tăng <strong>20-30% productivity</strong> cho mọi thành viên team<br />
+              Giảm <strong>40% thời gian onboarding</strong> cho dev mới<br />
+              <strong>ROI tích cực</strong> chỉ sau 3 tháng triển khai
+            </p>
+          </div>
+        </section>
+
+        <!-- Slide: Cài đặt và cấu trúc Memory Bank (1 cột, cân đối) -->
+        <section>
+          <h2>Cài đặt & cấu trúc Memory Bank</h2>
+          <div>
+            <h3>Bước 1: Cài đặt Cursor Editor</h3>
+            <ul style="font-size: 0.95em">
+              <li>Tải <a href="https://cursor.sh">Cursor Editor</a> (mới nhất)</li>
+              <li>Đăng ký tài khoản, kết nối API (nếu cần, GPT-4 khuyến nghị)</li>
+            </ul>
+            <h3>Bước 2: Tạo cấu trúc Memory Bank</h3>
+            <ul style="font-size: 0.95em">
+              <li>Clone dự án ONEDX đã có sẵn <code>memory-bank/</code></li>
+              <li>Kiểm tra đủ các file cốt lõi:</li>
+            </ul>
+            <pre
+              style="
+                font-size: 0.85em;
+                background: #23272e;
+                color: #fff;
+                padding: 6px 8px;
+                border-radius: 6px;
+                margin: 6px 0;
+              "
+            >
+memory-bank/
+├── projectbrief.md
+├── productContext.md
+├── systemPatterns.md
+├── techContext.md
+├── activeContext.md
+├── progress.md
+├── tasks.md
+├── SETUP_GUIDE.md
+├── USAGE_GUIDE.md
+├── userRules.md
+└── custom_modes/
+    ├── van_instructions.md
+    ├── plan_instructions.md
+    ├── creative_instructions.md
+    ├── implement_instructions.md
+    └── reflect_archive_instructions.md
+            </pre>
+          </div>
+        </section>
+
+        <!-- Slide: Thiết lập Custom Modes & Quy trình sử dụng (phần 2) -->
+        <section>
+          <h2>Thiết lập Custom Modes & Quy trình sử dụng</h2>
+          <div class="grid-container">
+            <div>
+              <h3>Bước 3: Thiết lập Custom Modes</h3>
+              <ul style="font-size: 0.92em">
+                <li>Settings → Features → Bật <b>Allow the creation of custom modes</b> (BETA)</li>
+                <li>Khởi động lại Cursor nếu được nhắc</li>
+                <li>Tạo 6 mode: VAN, PLAN, CREATIVE, IMPLEMENT, REFLECT, ARCHIVE</li>
+                <li>Dán hướng dẫn từ <code>custom_modes/</code> vào Advanced options cho từng mode</li>
+              </ul>
+              <h3>Bước 4: Thiết lập Rules</h3>
+              <ul style="font-size: 0.92em">
+                <li>Settings → Rules</li>
+                <li>Dán <code>userRules.md</code> vào Custom instructions</li>
+                <li>Lưu & khởi động lại Cursor</li>
+              </ul>
+            </div>
+            <div>
+              <div class="memory-bank-access" style="font-size: 0.9em">
+                <h4>Quy trình sử dụng</h4>
+                <ul>
+                  <li>Bắt đầu với VAN mode → Gõ <code>VAN</code></li>
+                  <li>Làm theo: <b>VAN → PLAN → CREATIVE → IMPLEMENT → REFLECT → ARCHIVE</b> (tùy task)</li>
+                  <li>Cập nhật Memory Bank sau mỗi thay đổi lớn</li>
+                </ul>
+                <h4>Lưu ý & xử lý sự cố</h4>
+                <ul>
+                  <li>Kiểm tra đúng hướng dẫn cho từng mode</li>
+                  <li>Nếu lỗi, xem <b>SETUP_GUIDE.md</b> & <b>USAGE_GUIDE.md</b></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide: Các MODE chính -->
+        <section>
+          <h2>Các MODE chính</h2>
+          <table class="comparison-table">
+            <tr>
+              <th>Mode</th>
+              <th>Mô tả</th>
+              <th>Vai trò</th>
+            </tr>
+            <tr class="fragment fade-in">
+              <td>🔍 VAN</td>
+              <td>Verification & Navigation</td>
+              <td>Điểm khởi đầu, phân tích dự án, xác định độ phức tạp</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td>📋 PLAN</td>
+              <td>Lập kế hoạch</td>
+              <td>Phân tích yêu cầu, lập kế hoạch từng bước</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td>🎨 CREATIVE</td>
+              <td>Thiết kế</td>
+              <td>Thiết kế giải pháp, đề xuất pattern/kiến trúc</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td>⚒️ IMPLEMENT</td>
+              <td>Thực thi</td>
+              <td>Viết code, thực hiện giải pháp</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td>🔍 REFLECT</td>
+              <td>Đánh giá</td>
+              <td>Review code, test và verify</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td>📚 ARCHIVE</td>
+              <td>Lưu trữ</td>
+              <td>Cập nhật tài liệu, đóng task</td>
+            </tr>
+          </table>
+        </section>
+
+        <!-- Slide: Demo các tình huống sử dụng thực tế - Phần 1: Phát triển tính năng mới -->
+        <section data-id="case-new-feature">
+          <h2>Case study 1: Phát triển tính năng mới</h2>
+          <div class="case-study new-feature">
+            <div class="case-title"><span class="case-icon">🌟</span>Thêm tính năng theo dõi tiến độ dự án</div>
+            <div class="process-steps">
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(76, 175, 80, 0.2); color: #4caf50">VAN MODE</div>
+                <span>Phân tích yêu cầu, xác nhận cấu trúc project, xác định phức tạp Level 3</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(33, 150, 243, 0.2); color: #2196f3">PLAN MODE</div>
+                <span>Lên kế hoạch chi tiết từng bước, tạo các component cần thiết</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(156, 39, 176, 0.2); color: #9c27b0">CREATIVE MODE</div>
+                <span>Thiết kế UI mockup, cấu trúc dữ liệu, luồng xử lý</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(255, 152, 0, 0.2); color: #ff9800">IMPLEMENT MODE</div>
+                <span>Viết code theo thiết kế kế hoạch, tương tác với API</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(244, 67, 54, 0.2); color: #f44336">REFLECT MODE</div>
+                <span>Test và review, Đảm bảo tính năng hoạt động tốt, trải nghiệm người dùng</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(121, 85, 72, 0.2); color: #795548">ARCHIVE MODE</div>
+                <span>Cập nhật tài liệu, tổng kết, đóng task, cập nhật Memory Bank</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide: Demo các tình huống sử dụng thực tế - Phần 2: Cập nhật tính năng -->
+        <section data-id="case-update-feature">
+          <h2>Case study 2: Cập nhật tính năng có sẵn</h2>
+          <div class="case-study update-feature">
+            <div class="case-title"><span class="case-icon">🔄</span>Nâng cấp form đăng ký với validation mới</div>
+            <div class="process-steps">
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(76, 175, 80, 0.2); color: #4caf50">VAN MODE</div>
+                <span>Phân tích tính năng hiện tại, xác định mức độ phức tạp Level 2</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(33, 150, 243, 0.2); color: #2196f3">PLAN MODE</div>
+                <span>Xác định các rule validation cần bổ sung, impact đến các thành phần khác</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(255, 152, 0, 0.2); color: #ff9800">IMPLEMENT MODE</div>
+                <span>Thực hiện các thay đổi trên component form đã có, thêm validation rules</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(244, 67, 54, 0.2); color: #f44336">REFLECT MODE</div>
+                <span>Đảm bảo các validation hoạt động chính xác, không break tính năng cũ</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(121, 85, 72, 0.2); color: #795548">ARCHIVE MODE</div>
+                <span>Cập nhật Memory Bank, tài liệu kỹ thuật và hướng dẫn sử dụng</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide: Demo các tình huống sử dụng thực tế - Phần 3: Fix lỗi -->
+        <section data-id="case-bug-fix">
+          <h2>Case study 3: Fix bug UI/UX</h2>
+          <div class="case-study bug-fix">
+            <div class="case-title"><span class="case-icon">🐞</span>Sửa lỗi hiển thị responsive trên mobile</div>
+            <div class="process-steps">
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(76, 175, 80, 0.2); color: #4caf50">VAN MODE</div>
+                <span>Tái hiện lỗi, xác định nguồn gốc, phân loại mức độ phức tạp Level 1</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(33, 150, 243, 0.2); color: #2196f3">PLAN MODE</div>
+                <span>Lên kế hoạch sửa lỗi, xác định CSS cần điều chỉnh</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(255, 152, 0, 0.2); color: #ff9800">IMPLEMENT MODE</div>
+                <span>Cập nhật CSS, thêm media queries, đảm bảo responsive trên mọi thiết bị</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(244, 67, 54, 0.2); color: #f44336">REFLECT MODE</div>
+                <span>Kiểm tra trên nhiều thiết bị và kích thước màn hình khác nhau</span>
+              </div>
+              <div class="step-arrow">↓</div>
+              <div class="process-step">
+                <div class="mode-badge" style="background: rgba(121, 85, 72, 0.2); color: #795548">ARCHIVE MODE</div>
+                <span>Cập nhật Memory Bank, đánh dấu bug đã được fix</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Slide: Demo & Thảo luận - chuyển xuống cuối -->
+        <section>
+          <h2>Demo & Thảo luận</h2>
+          <div class="text-center">
+            <div class="feature-box fragment grow">
+              <h3>Demo trực tiếp các trường hợp</h3>
+              <p>Bài demo sẽ thực hiện trên dự án ONEDX thực tế</p>
+            </div>
+
+            <div class="feature-box fragment grow">
+              <h3>Hỏi đáp & Thảo luận</h3>
+              <p>Giải đáp các câu hỏi về quy trình, cài đặt & áp dụng</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/plugin/zoom/zoom.js"></script>
+    <script>
+      // Cấu hình Reveal.js
+      Reveal.initialize({
+        hash: true,
+        slideNumber: 'c/t',
+        transition: 'slide',
+        transitionSpeed: 'default',
+        controls: true,
+        progress: true,
+        center: true, // Đảm bảo nội dung nằm ở giữa
+        // Cấu hình kích thước tốt hơn
+        width: 1200, // Cố định width cho slide
+        height: 900, // Tăng height cho slide nhiều hơn
+        minScale: 0.3, // Giảm scale để hiển thị đủ nội dung
+        maxScale: 1.5,
+        margin: 0.1, // Tăng margin
+        // Plugins
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealZoom],
+        // Thêm cấu hình để đảm bảo hiển thị tốt
+        keyboard: {
+          // Bổ sung shortcuts hữu ích
+          13: 'next', // Enter để đi đến slide tiếp
+          27: function () {
+            // ESC để xem tổng quan slide
+            Reveal.toggleOverview()
+          }
+        },
+        // Tùy chỉnh thêm để đảm bảo hiển thị đầy đủ
+        autoSlide: 0,
+        autoSlideStoppable: true,
+        autoPlayMedia: false,
+        preloadIframes: true,
+        hideInactiveCursor: false,
+        display: 'block',
+        // Đảm bảo hiển thị đủ nội dung
+        disableLayout: false,
+        embedded: false,
+        // Tắt chế độ loop
+        loop: false
+      })
+
+      // Sau khi tải xong, điều chỉnh lại để đảm bảo hiển thị đúng
+      Reveal.addEventListener('ready', function () {
+        // Tìm tất cả các slide có id bắt đầu bằng 'case-'
+        document.querySelectorAll('section[data-id^="case-"]').forEach(function (slide) {
+          slide.style.height = 'auto'
+          slide.style.minHeight = 'auto'
+          slide.style.overflow = 'visible'
+
+          // Thêm padding cho nội dung đủ hiển thị
+          slide.style.paddingBottom = '100px'
+
+          // Đảm bảo các process-step hiển thị đầy đủ
+          slide.querySelectorAll('.process-step').forEach(function (step) {
+            step.style.overflow = 'visible'
+          })
+        })
+
+        // Fix lỗi hiển thị ở zoom 100%
+        fixSlideDisplay()
+      })
+
+      // Thêm listener cho sự kiện resize và slidechanged
+      Reveal.addEventListener('slidechanged', fixSlideDisplay)
+      window.addEventListener('resize', fixSlideDisplay)
+
+      // Hàm giúp sửa lỗi hiển thị ở zoom 100%
+      function fixSlideDisplay() {
+        let currentSlide = Reveal.getCurrentSlide()
+        if (
+          currentSlide &&
+          currentSlide.getAttribute('data-id') &&
+          currentSlide.getAttribute('data-id').startsWith('case-')
+        ) {
+          // Đảm bảo case slide hiển thị đầy đủ
+          currentSlide.style.height = 'auto'
+          currentSlide.style.minHeight = 'auto'
+          currentSlide.style.overflow = 'visible'
+          currentSlide.style.paddingBottom = '100px'
+
+          // Đẩy content lên cao hơn
+          let caseStudy = currentSlide.querySelector('.case-study')
+          if (caseStudy) {
+            caseStudy.style.marginTop = '-10px'
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
