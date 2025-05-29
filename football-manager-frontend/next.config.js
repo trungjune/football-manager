@@ -2,18 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // Cấu hình cho Next.js 15
+  // Cấu hình cho Next.js 14
   experimental: {
-    // Kích hoạt React 19 features
-    serverActions: {
-      bodySizeLimit: '2mb',
-    },
-    // Kích hoạt Server Components
-    serverComponents: true,
+    // Kích hoạt Server Actions
+    serverActions: true,
     // Tối ưu hóa bundle
-    optimizeCss: true,
-    // Tối ưu hóa hình ảnh
-    optimizeImages: true,
+    optimizePackageImports: ['@ant-design/icons', '@heroicons/react'],
     // Tối ưu hóa fonts
     optimizeFonts: true,
   },

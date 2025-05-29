@@ -18,9 +18,9 @@ export const metadata: Metadata = {
 // Root layout component
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="vi" className={inter.variable}>
       <body>
