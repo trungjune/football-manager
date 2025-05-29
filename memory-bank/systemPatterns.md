@@ -1,291 +1,155 @@
-# System Patterns: Football Manager
+# System Patterns
 
-## Kiến trúc tổng thể
+## Kiến trúc hệ thống
 
-### Kiến trúc hệ thống
-Football Manager được xây dựng theo kiến trúc microservices với frontend và backend tách biệt:
+Football Manager được xây dựng theo kiến trúc client-server với các thành phần chính:
+
+1. **Frontend (Next.js)**: Giao diện người dùng, xử lý tương tác và hiển thị dữ liệu.
+2. **Backend (NestJS)**: API server, xử lý logic nghiệp vụ và tương tác với database.
+3. **Database (PostgreSQL)**: Lưu trữ dữ liệu của ứng dụng.
 
 ```
-┌─────────────────┐      ┌─────────────────┐
-│                 │      │                 │
-│    Frontend     │◄────►│     Backend     │
-│    (Next.js)    │      │    (NestJS)     │
-│                 │      │                 │
-└─────────────────┘      └────────┬────────┘
-                                  │
-                                  ▼
-                         ┌─────────────────┐
-                         │                 │
-                         │   PostgreSQL    │
-                         │   Database      │
-                         │                 │
-                         └─────────────────┘
+┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+│   Frontend  │      │   Backend   │      │  Database   │
+│  (Next.js)  │<────>│  (NestJS)   │<────>│(PostgreSQL) │
+└─────────────┘      └─────────────┘      └─────────────┘
 ```
 
-### Luồng dữ liệu
-```
-┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-│          │     │          │     │          │     │          │
-│   User   │────►│ Frontend │────►│ Backend  │────►│ Database │
-│          │     │          │     │          │     │          │
-└──────────┘     └──────────┘     └──────────┘     └──────────┘
-     ▲                                                  │
-     └──────────────────────────────────────────────────┘
-```
-
-## Mô hình dữ liệu
-
-### Entity Relationship Diagram
-```
-┌─────────────┐       ┌─────────────┐       ┌─────────────┐
-│    User     │       │    Team     │       │   Member    │
-├─────────────┤       ├─────────────┤       ├─────────────┤
-│ id          │       │ id          │       │ id          │
-│ email       │◄──┐   │ name        │   ┌──►│ name        │
-│ password    │   │   │ logo        │   │   │ position    │
-│ name        │   │   │ city        │   │   │ number      │
-│ avatar      │   └───┤ userId      │   │   │ teamId      │
-│ createdAt   │       │ createdAt   │   │   │ role        │
-│ updatedAt   │       │ updatedAt   │   │   │ phone       │
-└─────────────┘       └─────────────┘   │   │ email       │
-                            │           │   │ createdAt   │
-                            │           │   │ updatedAt   │
-                            ▼           │   └─────────────┘
-                      ┌─────────────┐   │
-                      │   Match     │   │
-                      ├─────────────┤   │
-                      │ id          │   │
-                      │ teamId      │   │
-                      │ opponent    │   │
-                      │ date        │   │
-                      │ location    │   │
-                      │ score       │   │
-                      │ result      │   │
-                      │ createdAt   │   │
-                      │ updatedAt   │   │
-                      └─────────────┘   │
-                            │           │
-              ┌─────────────┴───────────┘
-              │
-              ▼
-      ┌─────────────┐       ┌─────────────┐
-      │  MatchStat  │       │  Finance    │
-      ├─────────────┤       ├─────────────┤
-      │ id          │       │ id          │
-      │ matchId     │       │ teamId      │
-      │ memberId    │       │ type        │
-      │ goals       │       │ amount      │
-      │ assists     │       │ description │
-      │ yellowCards │       │ date        │
-      │ redCards    │       │ memberId    │
-      │ minutesPlayed│      │ createdAt   │
-      │ createdAt   │       │ updatedAt   │
-      │ updatedAt   │       └─────────────┘
-      └─────────────┘
-              │
-              ▼
-      ┌─────────────┐
-      │   Lineup    │
-      ├─────────────┤
-      │ id          │
-      │ teamId      │
-      │ name        │
-      │ formation   │
-      │ positions   │
-      │ matchId     │
-      │ createdAt   │
-      │ updatedAt   │
-      └─────────────┘
-```
-
-## Các mẫu thiết kế
+## Design Patterns
 
 ### Frontend Patterns
 
-#### 1. Component-based Architecture
-- Chia nhỏ UI thành các components tái sử dụng
-- Sử dụng composition để kết hợp các components
-- Phân tách rõ ràng giữa presentational và container components
-
-#### 2. Custom Hooks
-- Trích xuất logic phức tạp vào custom hooks
-- Tái sử dụng logic giữa các components
-- Ví dụ: `useAuth`, `useTeam`, `useMembers`, `useFinance`, `useMatches`, `useLineup`
-
-#### 3. Context API + Zustand
-- Sử dụng Context API cho state cục bộ giữa các components liên quan
-- Sử dụng Zustand cho global state management
-- Tách biệt state theo từng domain (auth, team, members, etc.)
-
-#### 4. Server Components + Client Components
-- Sử dụng Server Components cho các components không cần interactivity
-- Sử dụng Client Components cho các components cần xử lý sự kiện người dùng
-- Tối ưu hóa hiệu suất bằng cách giảm JavaScript gửi đến client
-
-#### 5. Data Fetching Patterns
-- Sử dụng SWR cho client-side data fetching với caching và revalidation
-- Sử dụng Server Components cho server-side data fetching
-- Implement optimistic updates cho UX tốt hơn
+1. **Component-Based Architecture**: Ứng dụng được chia thành các components nhỏ, tái sử dụng được.
+2. **Container/Presentation Pattern**: Tách biệt logic và UI để dễ dàng quản lý và test.
+3. **Hooks Pattern**: Sử dụng React Hooks để quản lý state và side effects.
+4. **Context API**: Quản lý global state cho các tính năng như authentication.
+5. **Zustand Store**: Quản lý state phức tạp với Zustand.
 
 ### Backend Patterns
 
-#### 1. Module-based Architecture (NestJS)
-- Chia code thành các modules theo domain
-- Mỗi module có controllers, services, và DTOs riêng
-- Sử dụng dependency injection để quản lý dependencies
+1. **Module-Based Architecture**: NestJS modules cho từng domain (users, teams, members, matches, finance, lineup).
+2. **Repository Pattern**: Tách biệt logic truy cập database khỏi business logic.
+3. **Dependency Injection**: Sử dụng DI của NestJS để quản lý dependencies.
+4. **DTO Pattern**: Data Transfer Objects để validate và transform data.
+5. **Guard Pattern**: Bảo vệ routes với JWT authentication.
 
-#### 2. Repository Pattern
-- Trừu tượng hóa data access layer
-- Tách biệt business logic và database operations
-- Dễ dàng thay đổi ORM hoặc database provider
+## Cấu trúc thư mục
 
-#### 3. DTO (Data Transfer Objects)
-- Xác định rõ ràng cấu trúc dữ liệu cho requests và responses
-- Validation sử dụng class-validator
-- Transformation sử dụng class-transformer
+### Frontend
 
-#### 4. Service Layer
-- Chứa business logic
-- Tách biệt controllers và repositories
-- Dễ dàng unit testing
+```
+football-manager-frontend/
+├── app/                  # Next.js App Router
+│   ├── api/              # API Routes
+│   ├── auth/             # Authentication pages
+│   ├── dashboard/        # Dashboard pages
+│   ├── finance/          # Finance management pages
+│   ├── lineup/           # Lineup management pages
+│   ├── matches/          # Matches management pages
+│   ├── members/          # Members management pages
+│   ├── settings/         # Settings pages
+│   ├── layout.tsx        # Root layout
+│   └── page.tsx          # Homepage
+├── components/           # Reusable components
+│   ├── auth/             # Authentication components
+│   ├── common/           # Common components
+│   ├── dashboard/        # Dashboard components
+│   ├── finance/          # Finance components
+│   ├── lineup/           # Lineup components
+│   ├── matches/          # Matches components
+│   ├── members/          # Members components
+│   └── settings/         # Settings components
+├── hooks/                # Custom hooks
+├── lib/                  # Utility libraries
+├── public/               # Static assets
+├── services/             # API services
+├── types/                # TypeScript types
+└── utils/                # Utility functions
+```
 
-#### 5. Guards và Interceptors
-- Sử dụng Guards cho authentication và authorization
-- Sử dụng Interceptors cho logging, error handling, và response transformation
+### Backend
 
-## Authentication Flow
+```
+football-manager-backend/
+├── prisma/               # Prisma schema and migrations
+├── src/
+│   ├── auth/             # Authentication module
+│   ├── common/           # Common utilities and decorators
+│   ├── config/           # Configuration
+│   ├── finance/          # Finance module
+│   ├── lineup/           # Lineup module
+│   ├── matches/          # Matches module
+│   ├── members/          # Members module
+│   ├── teams/            # Teams module
+│   ├── users/            # Users module
+│   ├── app.module.ts     # Root module
+│   └── main.ts           # Entry point
+└── test/                 # Tests
+```
+
+## Database Schema
+
+Football Manager sử dụng Prisma ORM với PostgreSQL. Schema chính bao gồm:
+
+1. **User**: Người dùng hệ thống
+2. **Team**: Đội bóng
+3. **Member**: Thành viên đội bóng
+4. **Match**: Trận đấu
+5. **Finance**: Tài chính (thu/chi)
+6. **Attendance**: Điểm danh
+
+Các mối quan hệ chính:
+- User thuộc về một Team
+- Team có nhiều Member
+- Team có nhiều Match
+- Team có nhiều Finance
+- Member có nhiều Attendance
+
+## Luồng xử lý chính
+
+### Authentication Flow
 
 ```
 ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-│          │     │          │     │          │     │          │
-│   User   │────►│ Frontend │────►│ Backend  │────►│ Database │
-│          │     │          │     │          │     │          │
+│  Login   │────>│  Verify  │────>│ Generate │────>│  Return  │
+│  Request │     │ Credentials│    │   JWT   │     │  Token   │
 └──────────┘     └──────────┘     └──────────┘     └──────────┘
-     ▲               │  ▲             │                 │
-     │               ▼  │             ▼                 │
-     │         ┌──────────┐     ┌──────────┐           │
-     │         │          │     │          │           │
-     └─────────┤ NextAuth │◄────┤  JWT /   │◄──────────┘
-               │          │     │  OAuth   │
-               └──────────┘     └──────────┘
 ```
 
-### Luồng đăng nhập
-1. Người dùng nhập email và password
-2. Frontend gửi credentials đến Backend API
-3. Backend xác thực credentials và tạo JWT token
-4. Token được trả về Frontend và lưu trữ
-5. Frontend sử dụng token cho các API requests tiếp theo
-
-### Luồng đăng nhập OAuth (Google)
-1. Người dùng chọn "Đăng nhập với Google"
-2. NextAuth chuyển hướng người dùng đến trang đăng nhập Google
-3. Sau khi xác thực, Google chuyển hướng về callback URL với authorization code
-4. Backend trao đổi code để lấy access token và thông tin người dùng
-5. Backend tạo hoặc cập nhật user record và tạo JWT token
-6. Token được trả về Frontend và lưu trữ
-
-## Lineup System Architecture
+### Data Fetching Flow
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│                 │     │                 │     │                 │
-│  Lineup Editor  │────►│  Formation      │────►│  Player         │
-│  Component      │     │  Manager        │     │  Positioning    │
-│                 │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-         │                      │                       │
-         ▼                      ▼                       ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│                 │     │                 │     │                 │
-│  Canvas         │     │  Drag & Drop    │     │  Lineup         │
-│  Renderer       │     │  System         │     │  Storage        │
-│                 │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
+┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
+│  Client  │────>│  API     │────>│ Database │────>│  Return  │
+│  Request │     │ Endpoint │     │  Query   │     │   Data   │
+└──────────┘     └──────────┘     └──────────┘     └──────────┘
 ```
 
-### Lineup Editor Components
-1. **Formation Selection**: Cho phép người dùng chọn sơ đồ chiến thuật (4-3-3, 4-4-2, etc.)
-2. **Player Assignment**: Gán cầu thủ vào các vị trí
-3. **Field Customization**: Tùy chỉnh màu sắc, logo, tên đội
-4. **Position Adjustment**: Điều chỉnh vị trí cầu thủ trên sân
-5. **Substitutes Management**: Quản lý cầu thủ dự bị
-6. **Share & Export**: Chia sẻ và xuất đội hình
-
-## Finance Management System
+### Data Mutation Flow
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│                 │     │                 │     │                 │
-│  Transaction    │────►│  Finance        │────►│  Reporting      │
-│  Entry          │     │  Service        │     │  Service        │
-│                 │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-         │                      │                       │
-         ▼                      ▼                       ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│                 │     │                 │     │                 │
-│  Validation     │     │  Categorization │     │  Visualization  │
-│  System         │     │  System         │     │  Components     │
-│                 │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
+┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
+│  Client  │────>│ Validate │────>│  Update  │────>│  Return  │────>│  Update  │
+│  Request │     │   Data   │     │ Database │     │ Response │     │   UI     │
+└──────────┘     └──────────┘     └──────────┘     └──────────┘     └──────────┘
 ```
 
-### Finance Management Components
-1. **Transaction Entry**: Nhập thông tin thu/chi
-2. **Fund Collection**: Quản lý việc thu quỹ từ thành viên
-3. **Expense Tracking**: Theo dõi các khoản chi
-4. **Financial Reports**: Báo cáo tài chính theo thời gian
-5. **Member Contribution**: Theo dõi đóng góp của từng thành viên
+## API Endpoints
 
-## Match Management System
+API được tổ chức theo RESTful principles với các endpoints chính:
 
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│                 │     │                 │     │                 │
-│  Match          │────►│  Statistics     │────►│  Performance    │
-│  Scheduler      │     │  Recorder       │     │  Analyzer       │
-│                 │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-         │                      │                       │
-         ▼                      ▼                       ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│                 │     │                 │     │                 │
-│  Calendar       │     │  Player Stats   │     │  Visualization  │
-│  Integration    │     │  Tracker        │     │  Components     │
-│                 │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-```
+- `/api/auth`: Authentication endpoints
+- `/api/users`: User management
+- `/api/teams`: Team management
+- `/api/members`: Member management
+- `/api/matches`: Match management
+- `/api/finance`: Finance management
+- `/api/lineup`: Lineup management
 
-### Match Management Components
-1. **Match Creation**: Tạo trận đấu mới
-2. **Result Recording**: Ghi nhận kết quả trận đấu
-3. **Player Statistics**: Thống kê chỉ số cầu thủ (bàn thắng, kiến tạo, thẻ)
-4. **Team Statistics**: Thống kê chỉ số đội (thắng, hòa, thua)
-5. **Performance Analysis**: Phân tích hiệu suất theo thời gian
+## Quy tắc bảo mật
 
-## Member Management System
-
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│                 │     │                 │     │                 │
-│  Member         │────►│  Role           │────►│  Profile        │
-│  Registry       │     │  Manager        │     │  Manager        │
-│                 │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-         │                      │                       │
-         ▼                      ▼                       ▼
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│                 │     │                 │     │                 │
-│  Contact        │     │  Attendance     │     │  Performance    │
-│  Manager        │     │  Tracker        │     │  Evaluator      │
-│                 │     │                 │     │                 │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-```
-
-### Member Management Components
-1. **Member Registration**: Đăng ký thành viên mới
-2. **Role Assignment**: Phân công vai trò (cầu thủ, huấn luyện viên, quản lý)
-3. **Profile Management**: Quản lý thông tin cá nhân
-4. **Contact Information**: Lưu trữ thông tin liên hệ
-5. **Performance Tracking**: Theo dõi hiệu suất qua các trận đấu
+1. **JWT Authentication**: Bảo vệ API endpoints với JWT
+2. **Role-Based Access Control**: Phân quyền theo vai trò (admin, user)
+3. **Input Validation**: Validate tất cả input từ client
+4. **HTTPS**: Sử dụng HTTPS cho tất cả communications
+5. **Password Hashing**: Mã hóa password với bcrypt

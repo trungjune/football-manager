@@ -1,126 +1,98 @@
-# Progress: Football Manager
+# Progress
 
-## Tiến độ tổng thể
-- [x] Khởi tạo Memory Bank
-- [x] Thiết lập cấu trúc dự án
-- [x] Thiết kế database schema với Prisma
-- [x] Tích hợp dữ liệu từ Google Sheet
-- [ ] Phát triển các tính năng cốt lõi
-- [ ] Testing và QA
-- [ ] Triển khai
+## Hoàn thành
 
-## Các cột mốc đã hoàn thành
-1. **Khởi tạo Memory Bank**:
-   - [x] Tạo projectbrief.md
-   - [x] Tạo productContext.md
-   - [x] Tạo systemPatterns.md
-   - [x] Tạo techContext.md
-   - [x] Tạo activeContext.md
-   - [x] Tạo progress.md
-   - [x] Tạo tasks.md
+### Phase 1: Thiết lập dự án, tích hợp dữ liệu từ Google Sheet
 
-2. **Thiết lập cấu trúc dự án**:
-   - [x] Tạo cấu trúc thư mục frontend
-   - [x] Thiết lập Next.js frontend
-   - [x] Cấu hình Ant Design và Tailwind CSS
-   - [x] Tạo cấu trúc thư mục backend
-   - [x] Thiết lập NestJS backend
-   - [x] Thiết kế database schema với Prisma
-   - [x] Khởi tạo Git repository
-   - [ ] Cấu hình PostgreSQL database
-   - [ ] Thiết lập CI/CD pipeline
+1. **Thiết lập dự án**
+   - [x] Khởi tạo dự án Next.js cho frontend
+   - [x] Khởi tạo dự án NestJS cho backend
+   - [x] Cấu hình Tailwind CSS và Ant Design
+   - [x] Cấu hình Prisma ORM
+   - [x] Cấu hình PostgreSQL database với Docker
+   - [x] Thiết lập CI/CD pipeline với GitHub Actions
 
-3. **Tích hợp dữ liệu từ Google Sheet**:
+2. **Tích hợp dữ liệu từ Google Sheet**
    - [x] Phân tích dữ liệu từ Google Sheet của đội bóng FC Vui Vẻ
-   - [x] Cập nhật database schema để phản ánh dữ liệu từ Google Sheet
-   - [x] Tạo script seeding để import dữ liệu vào database
-   - [x] Cập nhật README.md với thông tin về dữ liệu từ Google Sheet
+   - [x] Thiết kế schema database phù hợp với dữ liệu
+   - [x] Tạo script seeding để import dữ liệu thành viên và tài chính
+   - [x] Kiểm tra tính chính xác của dữ liệu đã import
 
-## Các cột mốc sắp tới
-1. **Phát triển tính năng xác thực**:
-   - [ ] Đăng ký người dùng
-   - [ ] Đăng nhập với email/password
-   - [ ] Đăng nhập với Google OAuth
-   - [ ] Quên mật khẩu và đặt lại mật khẩu
-   - [ ] Quản lý phiên làm việc
+3. **Phát triển tính năng xác thực (Backend)**
+   - [x] Tạo API endpoints cho đăng ký và đăng nhập
+   - [x] Tích hợp JWT authentication
+   - [x] Tích hợp Google OAuth
+   - [x] Tạo các guards và strategies cho authentication
 
-2. **Phát triển tính năng quản lý đội bóng**:
-   - [ ] Tạo đội bóng mới
-   - [ ] Cập nhật thông tin đội bóng
-   - [ ] Tải lên logo đội bóng
-   - [ ] Mời thành viên tham gia đội
+## Đang thực hiện
 
-3. **Phát triển tính năng quản lý thành viên**:
-   - [ ] Thêm thành viên mới
-   - [ ] Cập nhật thông tin thành viên
-   - [ ] Phân quyền thành viên
-   - [ ] Import thành viên từ danh bạ
+### Phase 2: Phát triển các tính năng quản lý thành viên và tài chính
 
-4. **Phát triển tính năng quản lý tài chính**:
-   - [ ] Ghi nhận thu/chi
-   - [ ] Theo dõi quỹ đội bóng
-   - [ ] Quản lý đóng góp của thành viên
-   - [ ] Báo cáo tài chính
+1. **Phát triển tính năng xác thực (Frontend)**
+   - [ ] Xây dựng UI cho đăng ký và đăng nhập
+   - [ ] Xây dựng UI cho quên mật khẩu và đặt lại mật khẩu
+   - [ ] Tích hợp NextAuth.js với backend
 
-5. **Phát triển tính năng quản lý trận đấu**:
-   - [ ] Lên lịch thi đấu
-   - [ ] Ghi nhận kết quả
-   - [ ] Thống kê thành tích
-   - [ ] Phân tích hiệu suất
+2. **Quản lý thành viên**
+   - [ ] Phát triển API endpoints cho quản lý thành viên
+   - [ ] Phát triển UI cho danh sách thành viên
+   - [ ] Phát triển UI cho thêm/sửa thành viên
+   - [ ] Phát triển UI cho xem chi tiết thành viên
 
-6. **Phát triển tính năng sắp xếp đội hình**:
-   - [ ] Tạo sơ đồ chiến thuật
-   - [ ] Sắp xếp vị trí cầu thủ
-   - [ ] Lưu và chia sẻ đội hình
-   - [ ] Quản lý cầu thủ dự bị
+3. **Quản lý tài chính**
+   - [ ] Phát triển API endpoints cho quản lý tài chính
+   - [ ] Phát triển UI cho danh sách các khoản thu/chi
+   - [ ] Phát triển UI cho thêm/sửa các khoản thu/chi
+   - [ ] Phát triển UI cho báo cáo tài chính
 
-## Các vấn đề đã biết
-- Chưa có thiết kế UI/UX chi tiết
-- Cần xác định chiến lược lưu trữ và hiển thị sơ đồ chiến thuật
-- Cần xác định cách quản lý thống kê trận đấu và cầu thủ hiệu quả
+## Sắp tới
 
-## Các quyết định kỹ thuật đã được thực hiện
-1. **Frontend**:
-   - Sử dụng Next.js với App Router
-   - Ant Design làm UI framework chính kết hợp với Tailwind CSS
-   - Zustand cho global state management
-   - SWR cho data fetching
+### Phase 3: Phát triển tính năng lịch thi đấu và sắp xếp đội hình
 
-2. **Backend**:
-   - NestJS framework
-   - Prisma ORM cho database interactions
-   - JWT cho authentication
-   - Swagger cho API documentation
+1. **Lịch thi đấu**
+   - [ ] Phát triển API endpoints cho quản lý trận đấu
+   - [ ] Phát triển UI cho lịch thi đấu
+   - [ ] Phát triển UI cho thêm/sửa trận đấu
+   - [ ] Phát triển UI cho xem chi tiết trận đấu
 
-3. **Database**:
-   - PostgreSQL
-   - Prisma migrations cho schema changes
-   - Seeding cho dữ liệu từ Google Sheet
+2. **Sắp xếp đội hình**
+   - [ ] Phát triển API endpoints cho quản lý đội hình
+   - [ ] Phát triển UI cho sắp xếp đội hình
+   - [ ] Phát triển UI cho lưu/tải đội hình
+   - [ ] Phát triển UI cho chia sẻ đội hình
 
-## Các quyết định kỹ thuật đang chờ xử lý
-1. **Hosting solution**: Cần quyết định nền tảng triển khai cho cả frontend và backend
-2. **Chiến lược testing**: Xác định phương pháp và công cụ testing
-3. **CI/CD pipeline**: Thiết lập quy trình tự động hóa cho việc triển khai
+### Phase 4: Testing, deployment và hoàn thiện
 
-## Các thay đổi gần đây
-- Khởi tạo Memory Bank với các file cơ bản
-- Xác định các yêu cầu chính của dự án
-- Lựa chọn stack công nghệ
-- Thiết lập cấu trúc dự án frontend và backend
-- Thiết kế database schema với Prisma
-- Tạo các file cấu hình cơ bản cho frontend và backend
-- Khởi tạo Git repository
-- Phân tích và tích hợp dữ liệu từ Google Sheet của đội bóng FC Vui Vẻ
-- Tạo script seeding để import dữ liệu vào database
+1. **Testing**
+   - [ ] Viết unit tests cho backend
+   - [ ] Viết unit tests cho frontend
+   - [ ] Viết integration tests
+   - [ ] Viết end-to-end tests
 
-## Các bài học kinh nghiệm
-- Cần có thiết kế UI/UX chi tiết trước khi bắt đầu phát triển
-- Cần xác định rõ các thực thể và mối quan hệ trong database
-- Cần có chiến lược rõ ràng cho việc quản lý state trong frontend
-- Việc sử dụng dữ liệu thực tế từ Google Sheet giúp hiểu rõ hơn về yêu cầu của người dùng
+2. **Deployment**
+   - [ ] Cấu hình CI/CD pipeline
+   - [ ] Deploy frontend lên Vercel
+   - [ ] Deploy backend lên Render
+   - [ ] Deploy database lên Supabase
 
-## Kế hoạch tiếp theo
-1. Cấu hình PostgreSQL database
-2. Thiết lập CI/CD pipeline
-3. Phát triển tính năng xác thực
-4. Phát triển tính năng quản lý đội bóng và thành viên
+3. **Hoàn thiện**
+   - [ ] Tối ưu hóa hiệu suất
+   - [ ] Cải thiện UI/UX
+   - [ ] Viết documentation
+   - [ ] Sửa lỗi và hoàn thiện tính năng
+
+## Vấn đề đã biết
+
+1. **Lỗi TypeScript trong backend**
+   - Cần cài đặt các dependencies và types cho backend, đặc biệt là passport-google-oauth20
+   - Cần cấu hình tsconfig.json cho backend
+
+2. **Cần cập nhật .env cho Google OAuth**
+   - Cần thêm GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET và GOOGLE_CALLBACK_URL vào .env
+
+## Thay đổi kế hoạch
+
+1. **Sử dụng Prisma thay vì TypeORM**
+   - Prisma cung cấp type safety tốt hơn
+   - Schema-first approach phù hợp với dự án
+   - Dễ dàng migrate và seed dữ liệu

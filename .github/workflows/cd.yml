@@ -1,0 +1,62 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "yarn"
+          cache-dependency-path: "football-manager-backend/yarn.lock"
+
+      - name: Install dependencies
+        working-directory: football-manager-backend
+        run: yarn install --frozen-lockfile
+
+      - name: Generate Prisma client
+        working-directory: football-manager-backend
+        run: yarn prisma:generate
+
+      - name: Build
+        working-directory: football-manager-backend
+        run: yarn build
+
+      - name: Deploy to Render
+        # This is a placeholder. You would typically use a Render-specific action
+        # or a custom deployment script here
+        run: echo "Deploying backend to Render"
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "yarn"
+          cache-dependency-path: "football-manager-frontend/yarn.lock"
+
+      - name: Install dependencies
+        working-directory: football-manager-frontend
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        working-directory: football-manager-frontend
+        run: yarn build
+
+      - name: Deploy to Vercel
+        # This is a placeholder. You would typically use a Vercel-specific action
+        # or a custom deployment script here
+        run: echo "Deploying frontend to Vercel"

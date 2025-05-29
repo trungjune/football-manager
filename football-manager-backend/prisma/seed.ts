@@ -1,171 +1,181 @@
-import { PrismaClient, MemberRole } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import { PrismaClient } from "@prisma/client";
+import * as bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
+// Enum replacements
+const Position = {
+  GOALKEEPER: "GOALKEEPER",
+  DEFENDER: "DEFENDER",
+  MIDFIELDER: "MIDFIELDER",
+  FORWARD: "FORWARD",
+};
+
+const FinanceType = {
+  INCOME: "INCOME",
+  EXPENSE: "EXPENSE",
+  CONTRIBUTION: "CONTRIBUTION",
+};
+
 async function main() {
-  // Tạo người dùng admin
-  const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@fcvuive.com' },
+  // Tạo admin user
+  const adminPassword = await bcrypt.hash("admin123", 10);
+  const admin = await prisma.user.upsert({
+    where: { email: "admin@example.com" },
     update: {},
     create: {
-      email: 'admin@fcvuive.com',
-      name: 'Admin FC Vui Vẻ',
-      password: await bcrypt.hash('admin123', 10),
+      email: "admin@example.com",
+      name: "Admin",
+      password: adminPassword,
+      role: "ADMIN",
     },
   });
 
-  console.log('Admin user created:', adminUser.id);
+  console.log("Admin user created:", admin);
 
-  // Tạo đội bóng FC Vui Vẻ
+  // Tạo team FC Vui Vẻ
   const team = await prisma.team.upsert({
-    where: { id: 'fc-vui-ve' },
+    where: { id: "fc-vui-ve-id" },
     update: {},
     create: {
-      id: 'fc-vui-ve',
-      name: 'FC Vui Vẻ',
-      city: 'Hà Nội',
-      userId: adminUser.id,
+      id: "fc-vui-ve-id",
+      name: "FC Vui Vẻ",
+      description: "Đội bóng sân 7 FC Vui Vẻ",
+      logo: "/images/logo.png",
     },
   });
 
-  console.log('Team created:', team.id);
+  console.log("Team created:", team);
 
-  // Dữ liệu thành viên từ Google Sheet
+  // Gán admin vào team
+  await prisma.user.update({
+    where: { id: admin.id },
+    data: { teamId: team.id },
+  });
+
+  // Tạo danh sách thành viên
   const members = [
     {
-      name: 'Nguyễn Hữu Phúc',
-      role: MemberRole.CAPTAIN,
-      position: 'Cánh/Thòng',
-      birthYear: 1987,
-      rank: 4,
-      phone: '0969240487',
-    },
-    {
-      name: 'Vũ Minh Hoàng',
-      role: MemberRole.PLAYER,
-      position: 'Gôn',
-      birthYear: 1992,
-      rank: 3,
-      phone: '0948395333',
-    },
-    {
-      name: 'Trịnh Hoàng Trung',
-      role: MemberRole.PLAYER,
-      position: 'Trên',
-      birthYear: 1996,
-      rank: 3,
-      phone: '0376861794',
-    },
-    {
-      name: 'Chu Thanh Quang',
-      role: MemberRole.PLAYER,
-      position: 'Giữa',
-      birthYear: 2002,
-      rank: 5,
-    },
-    {
-      name: 'Giáp Văn Chiến',
-      role: MemberRole.PLAYER,
-      position: 'Thòng',
-      birthYear: 2001,
-      rank: 4,
-      phone: '0397862092',
-    },
-    {
-      name: 'Lê Công Hậu',
-      role: MemberRole.PLAYER,
-      position: 'Cánh',
-      birthYear: 1995,
-      rank: 4,
-      phone: '0963359626',
-    },
-    {
-      name: 'Nguyễn Anh Thắng',
-      role: MemberRole.PLAYER,
-      position: 'Gôn',
-      birthYear: 2002,
-      rank: 4,
-    },
-    {
-      name: 'Nguyễn Minh Tuân',
-      role: MemberRole.PLAYER,
-      position: 'Thòng',
-      birthYear: 1991,
-      rank: 3,
-      phone: '0889133991',
-    },
-    {
-      name: 'Nguyễn Sỹ Hùng',
-      role: MemberRole.PLAYER,
-      position: 'Cánh/Trên',
-      birthYear: 2002,
-      rank: 4,
-      phone: '0398570078',
-    },
-    {
-      name: 'Đỗ Linh',
-      role: MemberRole.PLAYER,
-      position: 'Trên',
-      birthYear: 2005,
-      rank: 3,
-      phone: '0819168381',
-    },
-    {
-      name: 'Ngô Quốc Thắng',
-      role: MemberRole.PLAYER,
-      position: 'Cánh',
-      birthYear: 2002,
-      rank: 3,
-      phone: '0986584592',
-    },
-    {
-      name: 'Lê Đức Anh Dũng',
-      role: MemberRole.PLAYER,
-      position: 'Cánh/Thòng',
-      birthYear: 2002,
-      rank: 4,
-      phone: '0372598603',
-    },
-    {
-      name: 'Quân',
-      role: MemberRole.PLAYER,
-      position: 'Thòng',
-      birthYear: 2001,
-      rank: 4,
-    },
-    {
-      name: 'Ngô Văn Tân',
-      role: MemberRole.PLAYER,
-      position: 'Trên',
-      birthYear: 1986,
-      rank: 3,
-    },
-    {
-      name: 'Anh Cường',
-      role: MemberRole.PLAYER,
-      position: 'Gôn/Cánh',
+      name: "Nguyễn Văn A",
+      position: Position.GOALKEEPER,
+      phone: "0901234567",
       birthYear: 1990,
-      rank: 2,
-      phone: '0939483688',
-    },
-    {
-      name: 'Đỗ Việt Hùng',
-      role: MemberRole.PLAYER,
-      position: 'Cánh/Giữa',
-      birthYear: 1992,
       rank: 4,
     },
     {
-      name: 'Bùi Bảo Ngọc',
-      role: MemberRole.PLAYER,
-      position: 'Cánh/Thòng',
+      name: "Trần Văn B",
+      position: Position.DEFENDER,
+      phone: "0901234568",
+      birthYear: 1992,
+      rank: 3,
+    },
+    {
+      name: "Lê Văn C",
+      position: Position.DEFENDER,
+      phone: "0901234569",
+      birthYear: 1991,
+      rank: 4,
+    },
+    {
+      name: "Phạm Văn D",
+      position: Position.DEFENDER,
+      phone: "0901234570",
       birthYear: 1993,
       rank: 3,
     },
+    {
+      name: "Hoàng Văn E",
+      position: Position.MIDFIELDER,
+      phone: "0901234571",
+      birthYear: 1994,
+      rank: 5,
+    },
+    {
+      name: "Đỗ Văn F",
+      position: Position.MIDFIELDER,
+      phone: "0901234572",
+      birthYear: 1995,
+      rank: 4,
+    },
+    {
+      name: "Ngô Văn G",
+      position: Position.MIDFIELDER,
+      phone: "0901234573",
+      birthYear: 1992,
+      rank: 3,
+    },
+    {
+      name: "Vũ Văn H",
+      position: Position.FORWARD,
+      phone: "0901234574",
+      birthYear: 1991,
+      rank: 5,
+    },
+    {
+      name: "Đặng Văn I",
+      position: Position.FORWARD,
+      phone: "0901234575",
+      birthYear: 1990,
+      rank: 4,
+    },
+    {
+      name: "Bùi Văn J",
+      position: Position.GOALKEEPER,
+      phone: "0901234576",
+      birthYear: 1989,
+      rank: 3,
+    },
+    {
+      name: "Lý Văn K",
+      position: Position.DEFENDER,
+      phone: "0901234577",
+      birthYear: 1994,
+      rank: 2,
+    },
+    {
+      name: "Mai Văn L",
+      position: Position.MIDFIELDER,
+      phone: "0901234578",
+      birthYear: 1993,
+      rank: 3,
+    },
+    {
+      name: "Chu Văn M",
+      position: Position.FORWARD,
+      phone: "0901234579",
+      birthYear: 1992,
+      rank: 4,
+    },
+    {
+      name: "Dương Văn N",
+      position: Position.DEFENDER,
+      phone: "0901234580",
+      birthYear: 1995,
+      rank: 3,
+    },
+    {
+      name: "Hồ Văn O",
+      position: Position.MIDFIELDER,
+      phone: "0901234581",
+      birthYear: 1994,
+      rank: 2,
+    },
+    {
+      name: "Đinh Văn P",
+      position: Position.FORWARD,
+      phone: "0901234582",
+      birthYear: 1993,
+      rank: 3,
+    },
+    {
+      name: "Lương Văn Q",
+      position: Position.GOALKEEPER,
+      phone: "0901234583",
+      birthYear: 1991,
+      rank: 4,
+    },
   ];
 
-  // Thêm các thành viên vào database
   for (const memberData of members) {
     const member = await prisma.member.create({
       data: {
@@ -173,157 +183,35 @@ async function main() {
         teamId: team.id,
       },
     });
-    console.log(`Member created: ${member.name}`);
+    console.log(`Created member: ${member.name}`);
   }
 
-  // Dữ liệu tài chính (đóng quỹ) từ Google Sheet
-  const financialData = [
-    // Tháng 1/2025
-    { memberName: 'Nguyễn Hữu Phúc', amount: 200000, month: '01/2025' },
-    { memberName: 'Vũ Minh Hoàng', amount: 200000, month: '01/2025' },
-    { memberName: 'Trịnh Hoàng Trung', amount: 200000, month: '01/2025' },
-    { memberName: 'Lê Công Hậu', amount: 200000, month: '01/2025' },
-    { memberName: 'Nguyễn Anh Thắng', amount: 100000, month: '01/2025' },
-    { memberName: 'Nguyễn Minh Tuân', amount: 200000, month: '01/2025' },
-    { memberName: 'Nguyễn Sỹ Hùng', amount: 100000, month: '01/2025' },
-    { memberName: 'Ngô Quốc Thắng', amount: 200000, month: '01/2025' },
-    { memberName: 'Lê Đức Anh Dũng', amount: 100000, month: '01/2025' },
-    { memberName: 'Anh Cường', amount: 200000, month: '01/2025' },
-    { memberName: 'Đỗ Việt Hùng', amount: 200000, month: '01/2025' },
+  // Tạo dữ liệu tài chính (đóng quỹ)
+  const allMembers = await prisma.member.findMany({
+    where: { teamId: team.id },
+  });
 
-    // Tháng 2/2025
-    { memberName: 'Nguyễn Hữu Phúc', amount: 200000, month: '02/2025' },
-    { memberName: 'Vũ Minh Hoàng', amount: 200000, month: '02/2025' },
-    { memberName: 'Trịnh Hoàng Trung', amount: 200000, month: '02/2025' },
-    { memberName: 'Giáp Văn Chiến', amount: 200000, month: '02/2025' },
-    { memberName: 'Lê Công Hậu', amount: 200000, month: '02/2025' },
-    { memberName: 'Nguyễn Anh Thắng', amount: 100000, month: '02/2025' },
-    { memberName: 'Nguyễn Minh Tuân', amount: 200000, month: '02/2025' },
-    { memberName: 'Nguyễn Sỹ Hùng', amount: 200000, month: '02/2025' },
-    { memberName: 'Đỗ Linh', amount: 100000, month: '02/2025' },
-    { memberName: 'Ngô Quốc Thắng', amount: 200000, month: '02/2025' },
-    { memberName: 'Lê Đức Anh Dũng', amount: 100000, month: '02/2025' },
-    { memberName: 'Anh Cường', amount: 200000, month: '02/2025' },
-    { memberName: 'Đỗ Việt Hùng', amount: 200000, month: '02/2025' },
-
-    // Tháng 3/2025
-    { memberName: 'Nguyễn Hữu Phúc', amount: 200000, month: '03/2025' },
-    { memberName: 'Vũ Minh Hoàng', amount: 200000, month: '03/2025' },
-    { memberName: 'Trịnh Hoàng Trung', amount: 200000, month: '03/2025' },
-    { memberName: 'Giáp Văn Chiến', amount: 200000, month: '03/2025' },
-    { memberName: 'Lê Công Hậu', amount: 200000, month: '03/2025' },
-    { memberName: 'Nguyễn Anh Thắng', amount: 100000, month: '03/2025' },
-    { memberName: 'Nguyễn Minh Tuân', amount: 200000, month: '03/2025' },
-    { memberName: 'Nguyễn Sỹ Hùng', amount: 100000, month: '03/2025' },
-    { memberName: 'Đỗ Linh', amount: 100000, month: '03/2025' },
-    { memberName: 'Ngô Quốc Thắng', amount: 200000, month: '03/2025' },
-    { memberName: 'Anh Cường', amount: 200000, month: '03/2025' },
-    { memberName: 'Đỗ Việt Hùng', amount: 200000, month: '03/2025' },
-
-    // Tháng 4/2025
-    { memberName: 'Nguyễn Hữu Phúc', amount: 100000, month: '04/2025' },
-    { memberName: 'Vũ Minh Hoàng', amount: 200000, month: '04/2025' },
-    { memberName: 'Trịnh Hoàng Trung', amount: 200000, month: '04/2025' },
-    { memberName: 'Giáp Văn Chiến', amount: 200000, month: '04/2025' },
-    { memberName: 'Lê Công Hậu', amount: 200000, month: '04/2025' },
-    { memberName: 'Nguyễn Anh Thắng', amount: 100000, month: '04/2025' },
-    { memberName: 'Nguyễn Minh Tuân', amount: 200000, month: '04/2025' },
-    { memberName: 'Nguyễn Sỹ Hùng', amount: 100000, month: '04/2025' },
-    { memberName: 'Ngô Quốc Thắng', amount: 200000, month: '04/2025' },
-    { memberName: 'Lê Đức Anh Dũng', amount: 200000, month: '04/2025' },
-    { memberName: 'Quân', amount: 200000, month: '04/2025' },
-    { memberName: 'Anh Cường', amount: 200000, month: '04/2025' },
-    { memberName: 'Đỗ Việt Hùng', amount: 200000, month: '04/2025' },
-
-    // Tháng 5/2025
-    { memberName: 'Nguyễn Hữu Phúc', amount: 200000, month: '05/2025' },
-    { memberName: 'Vũ Minh Hoàng', amount: 200000, month: '05/2025' },
-    { memberName: 'Trịnh Hoàng Trung', amount: 200000, month: '05/2025' },
-    { memberName: 'Giáp Văn Chiến', amount: 200000, month: '05/2025' },
-    { memberName: 'Lê Công Hậu', amount: 200000, month: '05/2025' },
-    { memberName: 'Ngô Quốc Thắng', amount: 200000, month: '05/2025' },
-    { memberName: 'Lê Đức Anh Dũng', amount: 200000, month: '05/2025' },
-    { memberName: 'Anh Cường', amount: 200000, month: '05/2025' },
-    { memberName: 'Đỗ Việt Hùng', amount: 200000, month: '05/2025' },
-    { memberName: 'Bùi Bảo Ngọc', amount: 200000, month: '05/2025' },
-  ];
-
-  // Thêm dữ liệu tài chính vào database
-  for (const financeData of financialData) {
-    const member = await prisma.member.findFirst({
-      where: { name: financeData.memberName, teamId: team.id },
-    });
-
-    if (member) {
+  // Tạo dữ liệu đóng quỹ cho 5 tháng đầu năm 2025
+  for (let month = 1; month <= 5; month++) {
+    for (const member of allMembers) {
+      // Giả sử mỗi thành viên đóng 200k mỗi tháng
       await prisma.finance.create({
         data: {
-          amount: financeData.amount,
-          type: 'INCOME',
-          description: `Đóng quỹ tháng ${financeData.month}`,
-          month: financeData.month,
-          date: new Date(`20${financeData.month.split('/')[1]}-${financeData.month.split('/')[0]}-01`),
-          teamId: team.id,
+          type: FinanceType.CONTRIBUTION,
+          amount: 200000,
+          description: `Đóng quỹ tháng ${month}/2025`,
+          month: month,
+          year: 2025,
+          date: new Date(2025, month - 1, 15), // Ngày 15 hàng tháng
           memberId: member.id,
+          teamId: team.id,
         },
       });
     }
+    console.log(`Created financial contributions for month ${month}/2025`);
   }
 
-  // Thêm một số khoản chi tiêu
-  const expenses = [
-    {
-      amount: 1000000,
-      description: 'Thuê sân tháng 1/2025',
-      month: '01/2025',
-      date: new Date('2025-01-15'),
-    },
-    {
-      amount: 1000000,
-      description: 'Thuê sân tháng 2/2025',
-      month: '02/2025',
-      date: new Date('2025-02-15'),
-    },
-    {
-      amount: 1000000,
-      description: 'Thuê sân tháng 3/2025',
-      month: '03/2025',
-      date: new Date('2025-03-15'),
-    },
-    {
-      amount: 1000000,
-      description: 'Thuê sân tháng 4/2025',
-      month: '04/2025',
-      date: new Date('2025-04-15'),
-    },
-    {
-      amount: 500000,
-      description: 'Mua bóng mới',
-      month: '03/2025',
-      date: new Date('2025-03-10'),
-    },
-    {
-      amount: 300000,
-      description: 'Nước uống',
-      month: '04/2025',
-      date: new Date('2025-04-05'),
-    },
-  ];
-
-  // Thêm các khoản chi tiêu vào database
-  for (const expense of expenses) {
-    await prisma.finance.create({
-      data: {
-        amount: expense.amount,
-        type: 'EXPENSE',
-        description: expense.description,
-        month: expense.month,
-        date: expense.date,
-        teamId: team.id,
-      },
-    });
-  }
-
-  console.log('Seeding completed successfully!');
+  console.log("Seeding completed successfully");
 }
 
 main()
@@ -333,4 +221,4 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
-  }); 
+  });

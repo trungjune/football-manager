@@ -2,6 +2,7 @@
 module.exports = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
@@ -9,14 +10,17 @@ module.exports = {
       colors: {
         primary: {
           DEFAULT: '#1890ff',
+          light: '#69c0ff',
           dark: '#096dd9',
-          light: '#40a9ff',
         },
         secondary: {
           DEFAULT: '#52c41a',
+          light: '#95de64',
           dark: '#389e0d',
-          light: '#73d13d',
         },
+      },
+      fontFamily: {
+        sans: ['var(--font-inter)'],
       },
     },
   },
@@ -24,4 +28,5 @@ module.exports = {
   corePlugins: {
     preflight: false, // Tắt preflight để tránh xung đột với Ant Design
   },
+  important: true,
 } 

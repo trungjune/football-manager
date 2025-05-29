@@ -1,150 +1,151 @@
-# Tech Context: Football Manager
+# Tech Context
 
-## Stack công nghệ
+## Tech Stack
 
 ### Frontend
-- **Framework**: Next.js phiên bản mới nhất
-  - App Router
-  - Server Components
-  - Client Components
-  - API Routes
-- **State Management**: 
-  - React Context API
-  - Zustand
-- **UI Framework**: 
-  - Ant Design
-  - Tailwind CSS
-- **Form Handling**: 
-  - React Hook Form
-  - Zod (validation)
-- **HTTP Client**: 
-  - Axios
-  - SWR (data fetching)
-- **Authentication**: 
-  - NextAuth.js
-  - JWT
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **UI Library**: Ant Design
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand
+- **Data Fetching**: SWR
+- **Form Handling**: React Hook Form
+- **Validation**: Zod
+- **Authentication**: NextAuth.js
 
 ### Backend
-- **Framework**: NestJS phiên bản mới nhất
-- **Database**: 
-  - PostgreSQL
-  - TypeORM
-- **Authentication & Authorization**: 
-  - Passport.js
-  - JWT
-  - OAuth 2.0 (Google)
-- **API Documentation**: 
-  - Swagger/OpenAPI
-- **Validation**: 
-  - Class-validator
-  - Class-transformer
-- **Testing**: 
-  - Jest
-  - Supertest
+- **Framework**: NestJS
+- **Language**: TypeScript
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Authentication**: JWT, Passport
+- **API Documentation**: Swagger
+- **Validation**: class-validator, class-transformer
 
 ### DevOps
 - **Version Control**: Git
 - **CI/CD**: GitHub Actions
-- **Containerization**: Docker
-- **Deployment**: 
-  - Vercel (Frontend)
-  - Render/Railway (Backend)
-- **Monitoring**: Sentry
+- **Hosting**: Vercel (Frontend), Render (Backend)
+- **Database Hosting**: Supabase
 
-## Cấu trúc dự án
+## Development Environment
 
-### Frontend Structure
-```
-football-manager-frontend/
-├── app/
-│   ├── api/
-│   ├── auth/
-│   ├── dashboard/
-│   ├── members/
-│   ├── finance/
-│   ├── matches/
-│   ├── lineup/
-│   ├── settings/
-│   └── layout.tsx
-├── components/
-│   ├── common/
-│   ├── auth/
-│   ├── dashboard/
-│   ├── members/
-│   ├── finance/
-│   ├── matches/
-│   ├── lineup/
-│   └── settings/
-├── hooks/
-├── lib/
-├── services/
-├── types/
-├── utils/
-└── public/
+### Prerequisites
+- Node.js (v18+)
+- npm/yarn/pnpm
+- PostgreSQL
+- Git
+
+### Setup Instructions
+
+#### Frontend
+```bash
+# Clone repository
+git clone https://github.com/username/football-manager.git
+cd football-manager/football-manager-frontend
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+
+# Run development server
+npm run dev
 ```
 
-### Backend Structure
+#### Backend
+```bash
+# Navigate to backend directory
+cd ../football-manager-backend
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+
+# Generate Prisma client
+npx prisma generate
+
+# Run migrations
+npx prisma migrate dev
+
+# Seed database
+npm run prisma:seed
+
+# Run development server
+npm run start:dev
 ```
-football-manager-backend/
-├── src/
-│   ├── auth/
-│   ├── users/
-│   ├── teams/
-│   ├── members/
-│   ├── finance/
-│   ├── matches/
-│   ├── lineup/
-│   ├── common/
-│   ├── config/
-│   ├── app.module.ts
-│   └── main.ts
-├── test/
-└── prisma/
+
+## API Documentation
+
+API documentation is available via Swagger at `http://localhost:3001/api/docs` when running the backend locally.
+
+## Authentication Flow
+
+1. User logs in with email/password or OAuth provider
+2. Backend validates credentials and generates JWT token
+3. Token is stored in HTTP-only cookie or local storage
+4. Token is sent with each API request in Authorization header
+5. Backend validates token and authorizes requests
+
+## Database Schema
+
+The database schema is defined using Prisma and includes the following models:
+- User
+- Team
+- Member
+- Match
+- Finance
+- Attendance
+
+See `football-manager-backend/prisma/schema.prisma` for the complete schema definition.
+
+## Deployment
+
+### Frontend (Vercel)
+```bash
+# Build
+npm run build
+
+# Deploy
+vercel --prod
 ```
 
-## Quy ước và tiêu chuẩn
+### Backend (Render)
+```bash
+# Build
+npm run build
 
-### Coding Standards
-- **TypeScript**: Strict mode enabled
-- **ESLint**: AirBnB preset + custom rules
-- **Prettier**: Consistent code formatting
-- **Commit Convention**: Conventional Commits
+# Start
+npm run start:prod
+```
 
-### Naming Conventions
-- **Files**: kebab-case
-- **Components**: PascalCase
-- **Functions**: camelCase
-- **Variables**: camelCase
-- **Constants**: UPPER_SNAKE_CASE
-- **Interfaces/Types**: PascalCase with 'I' prefix for interfaces
+## Testing
 
-### Component Structure
-- Functional components with TypeScript
-- Props interface defined above component
-- Custom hooks for reusable logic
-- Separation of concerns (presentation vs. logic)
+### Frontend
+```bash
+# Run tests
+npm test
+```
 
-### API Conventions
-- RESTful API design
-- JSON response format
-- Consistent error handling
-- Versioning with /api/v1/
+### Backend
+```bash
+# Run unit tests
+npm run test
 
-### Authentication Flow
-- JWT-based authentication
-- Refresh token mechanism
-- Role-based access control
-- OAuth integration with Google
+# Run e2e tests
+npm run test:e2e
 
-## Công cụ phát triển
-- **IDE**: VS Code with recommended extensions
-- **API Testing**: Postman/Insomnia
-- **Database Management**: DBeaver/pgAdmin
-- **Design Collaboration**: Figma
+# Run test coverage
+npm run test:cov
+```
 
-## Quy trình phát triển
-- **Agile Methodology**: Scrum with 2-week sprints
-- **Version Control**: GitHub Flow
-- **Code Reviews**: Required for all PRs
-- **Testing**: Unit tests for critical functionality
-- **Documentation**: README, API docs, and inline comments
+## Coding Standards
+
+- Use ESLint and Prettier for code formatting
+- Follow TypeScript best practices
+- Write unit tests for critical functionality
+- Use descriptive variable and function names
+- Document complex functions and components

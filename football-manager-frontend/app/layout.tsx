@@ -1,11 +1,18 @@
-'use client';
-
+import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { ConfigProvider } from 'antd';
-import { SessionProvider } from 'next-auth/react';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+// Ant Design
+import { ConfigProvider } from 'antd';
+import theme from '@/lib/theme';
+
+// Font
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+
+export const metadata: Metadata = {
+  title: 'Football Manager - Quản lý đội bóng sân 7',
+  description: 'Ứng dụng quản lý đội bóng sân 7 toàn diện',
+};
 
 export default function RootLayout({
   children,
@@ -14,24 +21,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
-      <body className={inter.className}>
-        <SessionProvider>
-          <ConfigProvider
-            theme={{
-              token: {
-                colorPrimary: '#1890ff',
-                colorSuccess: '#52c41a',
-                colorWarning: '#faad14',
-                colorError: '#f5222d',
-                colorInfo: '#1890ff',
-                borderRadius: 4,
-                fontFamily: inter.style.fontFamily,
-              },
-            }}
-          >
-            {children}
-          </ConfigProvider>
-        </SessionProvider>
+      <body className={inter.variable}>
+        <ConfigProvider theme={theme}>
+          {children}
+        </ConfigProvider>
       </body>
     </html>
   );

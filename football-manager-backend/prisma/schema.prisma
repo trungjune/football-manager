@@ -11,148 +11,80 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  password      String?
-  name          String
-  avatar        String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  teams         Team[]
-  googleId      String?   @unique
-  refreshToken  String?
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  team      Team?    @relation(fields: [teamId], references: [id])
+  teamId    String?
 }
 
 model Team {
   id          String    @id @default(uuid())
   name        String
+  description String?
   logo        String?
-  city        String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  users       User[]
   members     Member[]
   matches     Match[]
   finances    Finance[]
-  lineups     Lineup[]
 }
 
 model Member {
-  id          String       @id @default(uuid())
-  name        String
-  position    String?
-  number      Int?
-  phone       String?
-  email       String?
-  birthYear   Int?
-  role        MemberRole   @default(PLAYER)
-  rank        Int?         // Xếp hạng kỹ năng (1-5)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  teamId      String
-  team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  matchStats  MatchStat[]
-  finances    Finance[]    // Liên kết với các khoản đóng góp tài chính
-  attendance  Attendance[]
-}
-
-enum MemberRole {
-  ADMIN
-  MANAGER
-  COACH
-  PLAYER
-  CAPTAIN
+  id         String       @id @default(uuid())
+  name       String
+  position   String
+  phone      String?
+  birthYear  Int?
+  rank       Int?         @default(3)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  team       Team         @relation(fields: [teamId], references: [id])
+  teamId     String
+  attendance Attendance[]
 }
 
 model Match {
-  id          String       @id @default(uuid())
+  id          String   @id @default(uuid())
   opponent    String
   date        DateTime
-  location    String?
-  score       String?
-  result      MatchResult?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  location    String
+  result      String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  team        Team     @relation(fields: [teamId], references: [id])
   teamId      String
-  team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  matchStats  MatchStat[]
-  lineup      Lineup?
-  attendance  Attendance[]
-}
-
-enum MatchResult {
-  WIN
-  LOSS
-  DRAW
-}
-
-model MatchStat {
-  id            String    @id @default(uuid())
-  goals         Int       @default(0)
-  assists       Int       @default(0)
-  yellowCards   Int       @default(0)
-  redCards      Int       @default(0)
-  minutesPlayed Int       @default(0)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  matchId       String
-  match         Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  memberId      String
-  member        Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
-
-  @@unique([matchId, memberId])
 }
 
 model Finance {
-  id          String        @id @default(uuid())
+  id          String   @id @default(uuid())
+  type        String
   amount      Float
-  type        FinanceType
   description String?
-  date        DateTime      @default(now())
-  month       String?       // Tháng đóng quỹ (format: MM/YYYY)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  teamId      String
-  team        Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  month       Int?
+  year        Int?
+  date        DateTime
   memberId    String?
-  member      Member?       @relation(fields: [memberId], references: [id])
-}
-
-enum FinanceType {
-  INCOME      // Thu (đóng quỹ)
-  EXPENSE     // Chi (các khoản chi tiêu)
-}
-
-model Lineup {
-  id          String    @id @default(uuid())
-  name        String
-  formation   String
-  positions   Json
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  team        Team     @relation(fields: [teamId], references: [id])
   teamId      String
-  team        Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  matchId     String?   @unique
-  match       Match?    @relation(fields: [matchId], references: [id])
 }
 
-// Model mới để theo dõi điểm danh
 model Attendance {
-  id          String    @id @default(uuid())
-  status      AttendanceStatus
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  memberId    String
-  member      Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  matchId     String
-  match       Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  date      DateTime
+  status    Boolean  @default(true)
+  member    Member   @relation(fields: [memberId], references: [id])
+  memberId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@unique([matchId, memberId])
-}
-
-enum AttendanceStatus {
-  PRESENT
-  ABSENT
-  LATE
+  @@unique([memberId, date])
 } 
