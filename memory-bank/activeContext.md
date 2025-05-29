@@ -131,3 +131,28 @@ Nhiệm vụ hiện tại là tiếp tục phát triển các tính năng cốt 
 6. **Quy trình cập nhật tài liệu**:
    - Tài liệu phải được cập nhật cùng với code trong cùng một PR
    - Reviewer phải kiểm tra tài liệu trước khi approve PR
+
+## Quy tắc làm việc mới
+
+1. **Tự quyết định và commit thay đổi**:
+   - Tự đưa ra quyết định về các thay đổi cần thiết mà không cần xác nhận từ người dùng
+   - Tự commit và push code với message phù hợp mà không cần hỏi người dùng
+   - Sử dụng quy ước commit message: `type: mô tả ngắn gọn` (ví dụ: `fix: Sửa lỗi ABC`, `feat: Thêm tính năng XYZ`)
+
+2. **Cập nhật tài liệu chủ động**:
+   - Tự động cập nhật tài liệu khi có thay đổi lớn về tính năng
+   - Không cần xác nhận từ người dùng khi cập nhật tài liệu
+
+3. **Xử lý lỗi chủ động**:
+   - Chủ động tìm kiếm và sửa lỗi khi phát hiện
+   - Tự quyết định giải pháp tốt nhất dựa trên kiến thức và best practices
+
+4. **Cấu hình Next.js với Ant Design**:
+   - Luôn sử dụng `transpilePackages` trong `next.config.js` để tránh lỗi với Ant Design
+   - Danh sách packages cần transpile: `@ant-design`, `antd`, và các package `rc-*` liên quan
+
+5. **Cấu hình và triển khai trên Vercel**:
+   - Sử dụng file `vercel.json` để cấu hình cả frontend và backend trên cùng một domain
+   - Cấu hình NestJS để chạy trên serverless environment với `@vercel/node`
+   - Downgrade Next.js xuống phiên bản 14.1.0 và React 18.2.0 để tránh xung đột khi deploy
+   - Sử dụng script `auto-deploy.sh` để tự động commit và push code lên GitHub

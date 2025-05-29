@@ -4,6 +4,7 @@ import './globals.css';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { ConfigProvider } from 'antd';
 import { theme } from '../lib/theme';
+import AuthProvider from '@/components/auth/AuthProvider';
 
 // Cấu hình font Inter
 const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
@@ -26,7 +27,9 @@ export default function RootLayout({
       <body>
         <AntdRegistry>
           <ConfigProvider theme={theme}>
-            {children}
+            <AuthProvider>
+              {children}
+            </AuthProvider>
           </ConfigProvider>
         </AntdRegistry>
       </body>

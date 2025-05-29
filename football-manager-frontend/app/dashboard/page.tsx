@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Row, Col, Statistic, Table, Button, Typography, Tag } from 'antd';
 import { 
   UserOutlined, 
@@ -10,8 +10,8 @@ import {
   ArrowUpOutlined,
   ArrowDownOutlined
 } from '@ant-design/icons';
-import MainLayout from '@/components/common/MainLayout';
 import type { ColumnsType } from 'antd/es/table';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 
 const { Title } = Typography;
 
@@ -25,6 +25,8 @@ interface MatchData {
 }
 
 export default function DashboardPage() {
+  const { user } = useAuthContext();
+  
   // Mock data
   const [recentMatches] = useState<MatchData[]>([
     {
@@ -105,9 +107,14 @@ export default function DashboardPage() {
   ];
 
   return (
-    <MainLayout>
-      <div className="page-header">
+    <div>
+      <div className="page-header mb-6">
         <Title level={2}>Tổng quan</Title>
+        {user && (
+          <div className="mb-4">
+            <p className="text-lg">Xin chào, {user.name}!</p>
+          </div>
+        )}
       </div>
 
       <Row gutter={[16, 16]}>
@@ -199,25 +206,28 @@ export default function DashboardPage() {
             {/* Recent contributions */}
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center">
+                <span className="mr-2">15/11/2023</span>
                 <span>Nguyễn Văn A</span>
               </div>
               <div className="text-green-600">+500,000 VNĐ</div>
             </div>
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center">
+                <span className="mr-2">10/11/2023</span>
                 <span>Trần Văn B</span>
               </div>
               <div className="text-green-600">+300,000 VNĐ</div>
             </div>
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center">
-                <span>Chi phí sân bóng</span>
+                <span className="mr-2">05/11/2023</span>
+                <span>Chi phí sân</span>
               </div>
               <div className="text-red-600">-1,000,000 VNĐ</div>
             </div>
           </Card>
         </Col>
       </Row>
-    </MainLayout>
+    </div>
   );
 } 

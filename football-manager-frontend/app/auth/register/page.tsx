@@ -4,23 +4,44 @@ import { useState } from 'react';
 import { Button, Form, Input, Typography, Card, Divider, message } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, GoogleOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import authService from '@/services/auth';
 
 const { Title, Text } = Typography;
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const router = useRouter();
 
   const onFinish = async (values: { name: string; email: string; password: string; confirmPassword: string }) => {
     setLoading(true);
     try {
-      // Implement registration logic here
-      console.log('Register values:', values);
+      // Remove confirmPassword as it's not needed for the API call
+      const { confirmPassword, ...registerData } = values;
+      await authService.register(registerData);
       message.success('Đăng ký thành công!');
-    } catch (error) {
+      router.push('/dashboard');
+    } catch (error: any) {
       console.error('Registration error:', error);
-      message.error('Đăng ký thất bại. Vui lòng thử lại sau.');
+      message.error(
+        error.response?.data?.message || 
+        'Đăng ký thất bại. Vui lòng thử lại sau.'
+      );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    try {
+      await authService.loginWithGoogle();
+      // Không cần message success vì sẽ chuyển hướng đến Google
+    } catch (error) {
+      console.error('Google login error:', error);
+      message.error('Đăng ký với Google thất bại. Vui lòng thử lại sau.');
+      setGoogleLoading(false);
     }
   };
 
@@ -111,10 +132,8 @@ export default function RegisterPage() {
           size="large"
           block
           className="mb-4"
-          onClick={() => {
-            // Implement Google registration
-            console.log('Google registration clicked');
-          }}
+          onClick={handleGoogleLogin}
+          loading={googleLoading}
         >
           Đăng ký với Google
         </Button>
