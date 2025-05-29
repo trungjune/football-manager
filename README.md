@@ -79,8 +79,37 @@ Truy cập http://localhost:5050 với thông tin đăng nhập:
 - [Frontend Documentation](./football-manager-frontend/README.md)
 - [Backend Documentation](./football-manager-backend/README.md)
 
-## Triển khai
-Dự án có thể được triển khai lên Vercel (Frontend) và Vercel Serverless Functions hoặc một dịch vụ hosting khác (Backend).
+## Triển khai (Deployment)
+
+Dự án này được cấu hình để triển khai tự động lên Vercel khi có thay đổi trên branch `main`.
+
+### Triển khai tự động
+
+1. Sử dụng script auto-deploy:
+   ```bash
+   ./auto-deploy.sh
+   ```
+   Script này sẽ tự động commit, push code lên GitHub và Vercel sẽ tự động build & deploy.
+
+2. Theo dõi trạng thái deploy tại:
+   [https://vercel.com/trungs-projects-4a25ad7a/football-manager](https://vercel.com/trungs-projects-4a25ad7a/football-manager)
+
+### Cấu hình môi trường
+
+1. **Vercel**:
+   - Đã cấu hình trong file `vercel.json` để deploy cả frontend và backend trên cùng một domain.
+   - Backend API có thể truy cập qua đường dẫn `/api/*`.
+   - Frontend có thể truy cập trực tiếp tại domain chính.
+
+2. **Biến môi trường**:
+   - Các biến môi trường cần thiết đã được cấu hình trong Vercel Dashboard.
+   - Tham khảo file `.env.example` trong thư mục frontend và backend để biết danh sách các biến môi trường cần thiết.
+
+### Lưu ý quan trọng
+
+- **KHÔNG** commit file `.env` chứa thông tin nhạy cảm lên GitHub.
+- Cấu hình các biến môi trường nhạy cảm (như DATABASE_URL, JWT_SECRET) trực tiếp trong Vercel Dashboard.
+- Đảm bảo database PostgreSQL đã được cấu hình và có thể truy cập từ Vercel.
 
 ## Giấy phép
 [MIT License](LICENSE) 

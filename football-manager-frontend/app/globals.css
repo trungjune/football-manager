@@ -4,14 +4,27 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+  --background-start-rgb: 246, 248, 250;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-  margin: 0;
-  padding: 0;
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  min-height: 100vh;
 }
 
 /* Các style chung cho toàn bộ ứng dụng */
@@ -44,4 +57,55 @@ body {
 .card {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Ant Design custom styles */
+.ant-layout {
+  min-height: 100vh;
+}
+
+.ant-layout-header {
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+}
+
+.ant-layout-content {
+  padding: 24px;
+}
+
+.ant-layout-footer {
+  text-align: center;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-inter);
+  font-weight: 600;
+}
+
+/* Responsive utilities */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 } 

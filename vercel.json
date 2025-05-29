@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "buildCommand": "cd football-manager-frontend && npm install && npm run build",
+  "outputDirectory": "football-manager-frontend/.next",
+  "builds": [
+    {
+      "src": "football-manager-frontend/package.json",
+      "use": "@vercel/next"
+    },
+    {
+      "src": "football-manager-backend/src/main.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "football-manager-backend/src/main.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "football-manager-frontend/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "FRONTEND_URL": "https://my-football-manager.vercel.app"
+  }
+} 

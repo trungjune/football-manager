@@ -1,24 +1,37 @@
 import type { ThemeConfig } from "antd";
 
-const theme: ThemeConfig = {
+// Cấu hình theme cho Ant Design
+export const theme: ThemeConfig = {
   token: {
-    colorPrimary: "#1890ff",
+    colorPrimary: "#1677ff",
     colorSuccess: "#52c41a",
     colorWarning: "#faad14",
-    colorError: "#f5222d",
-    colorInfo: "#1890ff",
-    borderRadius: 4,
+    colorError: "#ff4d4f",
+    colorInfo: "#1677ff",
+    borderRadius: 6,
+    wireframe: false,
   },
   components: {
     Button: {
-      colorPrimary: "#1890ff",
+      colorPrimary: "#1677ff",
       algorithm: true,
     },
+    Input: {
+      colorPrimary: "#1677ff",
+    },
+    Select: {
+      colorPrimary: "#1677ff",
+    },
     Table: {
-      colorPrimary: "#1890ff",
-      algorithm: true,
+      colorPrimary: "#1677ff",
+    },
+    Menu: {
+      colorPrimary: "#1677ff",
+    },
+    Layout: {
+      colorBgHeader: "#001529",
+      colorBgBody: "#f0f2f5",
+      colorBgTrigger: "#002140",
     },
   },
 };
-
-export default theme;

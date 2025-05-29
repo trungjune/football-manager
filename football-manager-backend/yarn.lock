@@ -745,7 +745,7 @@
   resolved "https://registry.npmjs.org/@nestjs/passport/-/passport-10.0.3.tgz"
   integrity sha512-znJ9Y4S8ZDVY+j4doWAJ8EuuVO7SkQN3yOBmzxbGaXbvcSwFDAdGJ+OMCg52NdzIO4tQoN4pYKx8W6M0ArfFRQ==
 
-"@nestjs/platform-express@^10.0.0":
+"@nestjs/platform-express@^10.0.0", "@nestjs/platform-express@^10.4.18":
   version "10.4.18"
   resolved "https://registry.npmjs.org/@nestjs/platform-express/-/platform-express-10.4.18.tgz"
   integrity sha512-v+W+Pu5NOVK/bSG5A5mOnXyoVwN5mJUe4o0j0UJ9Ig9JMmjVxg+Zw2ydTfpOQ+R82lRYWJUjjv3dvqKaFW2z7w==

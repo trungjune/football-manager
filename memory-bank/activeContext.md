@@ -101,3 +101,33 @@ Nhiệm vụ hiện tại là tiếp tục phát triển các tính năng cốt 
    - RESTful API endpoints
    - DTO validation với class-validator
    - Swagger documentation cho API
+
+## Quy tắc viết tài liệu
+
+Để đảm bảo dự án luôn có tài liệu đầy đủ và cập nhật, chúng ta sẽ tuân thủ các quy tắc sau:
+
+1. **Viết tài liệu cho mọi tính năng quan trọng**:
+   - Mỗi tính năng lớn (quản lý thành viên, tài chính, trận đấu, đội hình) phải có tài liệu riêng
+   - Tài liệu phải bao gồm mô tả tính năng, cách sử dụng, và các API liên quan
+
+2. **Cập nhật tài liệu thường xuyên**:
+   - Mỗi khi có thay đổi lớn về tính năng, phải cập nhật tài liệu tương ứng
+   - Khi refactor code, phải đảm bảo tài liệu vẫn chính xác
+
+3. **Cấu trúc tài liệu**:
+   - README.md: Tổng quan về dự án
+   - /docs/features/: Tài liệu chi tiết cho từng tính năng
+   - /docs/api/: Tài liệu API
+   - /docs/setup/: Hướng dẫn cài đặt và cấu hình
+
+4. **Quy tắc viết code comments**:
+   - Mỗi component, function, hook quan trọng phải có JSDoc
+   - Các đoạn code phức tạp phải có comment giải thích
+
+5. **Tài liệu API**:
+   - Mỗi API endpoint phải có mô tả đầy đủ
+   - Bao gồm: URL, method, params, request body, response, error codes
+
+6. **Quy trình cập nhật tài liệu**:
+   - Tài liệu phải được cập nhật cùng với code trong cùng một PR
+   - Reviewer phải kiểm tra tài liệu trước khi approve PR
