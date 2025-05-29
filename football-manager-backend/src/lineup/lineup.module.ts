@@ -1,9 +1,13 @@
-import { Module } from '@nestjs/common';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { LineupController } from "./lineup.controller";
+import { LineupService } from "./lineup.service";
+import { TeamGenerationHistory, TeamTemplate } from "./lineup.entity";
 
 @Module({
-  imports: [],
-  controllers: [],
-  providers: [],
-  exports: [],
+  imports: [TypeOrmModule.forFeature([TeamGenerationHistory, TeamTemplate])],
+  controllers: [LineupController],
+  providers: [LineupService],
+  exports: [LineupService],
 })
-export class LineupModule {} 
+export class LineupModule {}
