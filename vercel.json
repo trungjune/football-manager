@@ -4,18 +4,18 @@
   "outputDirectory": "football-manager-frontend/.next",
   "builds": [
     {
-      "src": "football-manager-frontend/package.json",
-      "use": "@vercel/next"
-    },
-    {
-      "src": "football-manager-backend/src/main.ts",
-      "use": "@vercel/node"
+      "src": "football-manager-backend/api/index.ts",
+      "use": "@vercel/node",
+      "config": {
+        "memory": 1024,
+        "maxDuration": 10
+      }
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "football-manager-backend/src/main.ts"
+      "dest": "football-manager-backend/api/index.ts"
     },
     {
       "src": "/(.*)",
@@ -24,6 +24,9 @@
   ],
   "env": {
     "NODE_ENV": "production",
-    "FRONTEND_URL": "https://my-football-manager.vercel.app"
+    "FRONTEND_URL": "https://my-football-manager.vercel.app",
+    "DATABASE_URL": "postgres://neondb_owner:npg_NWfo9mtEs1we@ep-delicate-meadow-a46udu99-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require",
+    "GOOGLE_CALLBACK_URL": "https://my-football-manager.vercel.app/auth/google/callback",
+    "JWT_SECRET": "football_manager_secret_key_for_production"
   }
 } 
