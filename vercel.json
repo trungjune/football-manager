@@ -1,8 +1,13 @@
 {
   "version": 2,
+  "framework": "nextjs",
   "buildCommand": "cd football-manager-frontend && npm install && npm run build",
   "outputDirectory": "football-manager-frontend/.next",
   "builds": [
+    {
+      "src": "football-manager-frontend/package.json",
+      "use": "@vercel/next"
+    },
     {
       "src": "football-manager-backend/api/index.ts",
       "use": "@vercel/node",
@@ -10,16 +15,45 @@
         "memory": 1024,
         "maxDuration": 10
       }
+    },
+    {
+      "src": "football-manager-backend/api/health.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "football-manager-backend/api/public.ts",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
+      "src": "/api/health",
+      "dest": "/football-manager-backend/api/health.ts",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      }
+    },
+    {
+      "src": "/api/public",
+      "dest": "/football-manager-backend/api/public.ts",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      }
+    },
+    {
       "src": "/api/(.*)",
-      "dest": "football-manager-backend/api/index.ts"
+      "dest": "/football-manager-backend/api/index.ts"
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "football-manager-frontend/$1"
+      "dest": "/football-manager-frontend/$1"
     }
   ],
   "env": {

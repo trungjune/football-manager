@@ -54,4 +54,11 @@ logs
 # Temp directories
 .temp
 .tmp
-.cache 
+.cache
+
+# Vercel build output
+.vercel_build_output
+.vercel-build-output
+
+# Local development
+.local 

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Football Manager API</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .card {
+      background-color: #f5f5f5;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .endpoint {
+      background-color: #e9f7ef;
+      border-radius: 5px;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+    .endpoint h3 {
+      margin-top: 0;
+      color: #2e7d32;
+    }
+    .method {
+      display: inline-block;
+      padding: 3px 6px;
+      border-radius: 3px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+    .get {
+      background-color: #e3f2fd;
+      color: #0d47a1;
+    }
+    .post {
+      background-color: #e8f5e9;
+      color: #1b5e20;
+    }
+    .put {
+      background-color: #fff8e1;
+      color: #ff8f00;
+    }
+    .delete {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+    code {
+      background-color: #f0f0f0;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    pre {
+      background-color: #f0f0f0;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Football Manager API</h1>
+  <p>Welcome to the Football Manager API documentation. This page provides information about available endpoints and how to use them.</p>
+  
+  <div class="card">
+    <h2>API Status</h2>
+    <p>The API is currently <span id="api-status">checking status...</span></p>
+    <p>Last checked: <span id="last-checked">-</span></p>
+  </div>
+  
+  <h2>Available Endpoints</h2>
+  
+  <div class="endpoint">
+    <h3><span class="method get">GET</span> /api/status</h3>
+    <p>Returns the current status of the API.</p>
+    <h4>Example Response:</h4>
+    <pre>{
+  "status": "ok",
+  "message": "API is working!",
+  "timestamp": "2025-05-30T08:32:50.123Z",
+  "version": "1.0.0"
+}</pre>
+  </div>
+  
+  <div class="endpoint">
+    <h3><span class="method get">GET</span> /api/v1/status</h3>
+    <p>Returns the current status of the API (v1 version).</p>
+    <h4>Example Response:</h4>
+    <pre>{
+  "status": "ok",
+  "message": "API is working!",
+  "timestamp": "2025-05-30T08:32:50.123Z",
+  "version": "1.0.0"
+}</pre>
+  </div>
+  
+  <div class="endpoint">
+    <h3><span class="method get">GET</span> /api/health</h3>
+    <p>Health check endpoint for the backend API.</p>
+    <h4>Example Response:</h4>
+    <pre>{
+  "status": "ok",
+  "message": "API is working!",
+  "timestamp": "2025-05-30T08:32:50.123Z",
+  "env": "production",
+  "version": "1.0.0"
+}</pre>
+  </div>
+  
+  <div class="endpoint">
+    <h3><span class="method get">GET</span> /api/public</h3>
+    <p>Public endpoint that returns information about available API endpoints.</p>
+    <h4>Example Response:</h4>
+    <pre>{
+  "status": "ok",
+  "message": "Public API is working!",
+  "timestamp": "2025-05-30T08:32:50.123Z",
+  "endpoints": [
+    {
+      "path": "/api/public",
+      "method": "GET",
+      "description": "This endpoint"
+    },
+    {
+      "path": "/api/health",
+      "method": "GET",
+      "description": "Health check endpoint"
+    }
+  ]
+}</pre>
+  </div>
+  
+  <div class="card">
+    <h2>Testing Tools</h2>
+    <p>You can use our <a href="/api-test.html">API Testing Tool</a> to test the endpoints directly in your browser.</p>
+  </div>
+  
+  <div class="footer">
+    <p>Football Manager API Documentation &copy; 2025</p>
+  </div>
+  
+  <script>
+    // Check API status
+    function checkApiStatus() {
+      fetch('/api/v1/status')
+        .then(response => {
+          if (response.ok) {
+            document.getElementById('api-status').textContent = 'online';
+            document.getElementById('api-status').style.color = '#2e7d32';
+          } else {
+            document.getElementById('api-status').textContent = 'offline';
+            document.getElementById('api-status').style.color = '#c62828';
+          }
+        })
+        .catch(error => {
+          document.getElementById('api-status').textContent = 'offline';
+          document.getElementById('api-status').style.color = '#c62828';
+        })
+        .finally(() => {
+          document.getElementById('last-checked').textContent = new Date().toLocaleString();
+        });
+    }
+    
+    // Check status when page loads
+    checkApiStatus();
+    
+    // Check status every 60 seconds
+    setInterval(checkApiStatus, 60000);
+  </script>
+</body>
+</html> 
