@@ -1,13 +1,6 @@
 {
   "version": 2,
-  "framework": "nextjs",
-  "buildCommand": "cd football-manager-frontend && npm install && npm run build",
-  "outputDirectory": "football-manager-frontend/.next",
   "builds": [
-    {
-      "src": "football-manager-frontend/package.json",
-      "use": "@vercel/next"
-    },
     {
       "src": "football-manager-backend/api/index.ts",
       "use": "@vercel/node",
@@ -23,6 +16,10 @@
     {
       "src": "football-manager-backend/api/public.ts",
       "use": "@vercel/node"
+    },
+    {
+      "src": "football-manager-frontend/package.json",
+      "use": "@vercel/next"
     }
   ],
   "routes": [
